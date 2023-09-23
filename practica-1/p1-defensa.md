@@ -135,3 +135,69 @@ Codename: bullseye
 ```
 9. Repetimos el proceso para actualizarlo a la ultima versión disponible, en caso de duda consultamos [esta pagina](https://www.debian.org/releases/stable/i386/release-notes/ch-upgrading.es.html#backup).
 
+### Apartado C
+Identifique la secuencia completa de arranque de una máquina basada en la distribución de referencia (desde la pulsación del botón de arranque hasta la pantalla de login). ¿Qué target por defecto tiene su máquina? ¿Cómo podría cambiar el target de arranque? ¿Qué targets tiene su sistema y en qué estado se encuentran? ¿Y los services? Obtenga la relación de servicios de su sistema y su estado. ¿Qué otro tipo de unidades existen?
+
+1. Ver el target predeterminado con `systemctl get-default`.
+2. Ver la lista de dependencias del target actual con `systemctl list-dependencies default.target`.
+> El target por defecto es `graphical.target`.
+3. Cambiar el target por defecto con `systemctl set-default <TARGET>`.
+4. Ver targets del sistema y su estado con `systemctl list-unit-files --type=target`
+```
+root@debian:/home/lsi# systemctl list-unit-files --type=target
+UNIT FILE                     STATE    VENDOR PRESET
+basic.target                  static   -
+blockdev@.target              static   -
+bluetooth.target              static   -
+...
+...
+...
+umount.target                 static   -
+usb-gadget.target             static   -
+
+67 unit files listed.
+```
+5. Ver servicios con `systemctl list-unit-files --type=service`
+```
+root@debian:/home/lsi# systemctl list-unit-files --type=service
+UNIT FILE                              STATE           VENDOR PRESET
+accounts-daemon.service                masked          enabled
+alsa-restore.service                   static          -
+alsa-state.service                     static          -
+alsa-utils.service                     masked          enabled
+anacron.service                        enabled         enabled
+apparmor.service                       enabled         enabled
+apt-daily-upgrade.service              static          -
+apt-daily.service                      static          -
+autovt@.service                        alias           -
+...
+...
+...
+wacom-inputattach@.service             static          -
+wpa_supplicant-nl80211@.service        disabled        enabled
+wpa_supplicant-wired@.service          disabled        enabled
+wpa_supplicant.service                 disabled        enabled
+wpa_supplicant@.service                disabled        enabled
+x11-common.service                     masked          enabled
+
+173 unit files listed.
+```
+7. Ver otro tipo de unidades con `systemctl list-units -t help`
+```
+root@debian:/home/lsi# systemctl list-units -t help
+Available unit types:
+service
+mount
+swap
+socket
+target
+device
+automount
+timer
+path
+slice
+scope
+```
+
+
+

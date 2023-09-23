@@ -28,3 +28,62 @@ iface ens34 inet static
 > La red es la `10.11.48.0/23` esto quiere decir todo el segmento comienza en `10.11.48.0` y finaliza en `10.11.49.255`.
 
 > No confundir la dirección de broadcast con la ip address de ens34.
+`/etc/hosts`:
+
+```
+127.0.0.1	localhost
+10.11.49.54	debian
+
+# The following lines are desirable for IPv6 capable hosts
+::1     localhost ip6-localhost ip6-loopback
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+```
+
+`/etc/resolv.conf`:
+
+```
+domain udc.pri
+search udc.pri
+nameserver 10.8.12.49
+nameserver 10.8.12.50
+nameserver 10.8.12.47
+```
+
+`/etc/nsswitch.conf`:
+
+```
+# /etc/nsswitch.conf
+#
+# Example configuration of GNU Name Service Switch functionality.
+# If you have the `glibc-doc-reference' and `info' packages installed, try:
+# `info libc "Name Service Switch"' for information about this file.
+
+passwd:         files systemd
+group:          files systemd
+shadow:         files
+gshadow:        files
+
+hosts:          files mdns4_minimal [NOTFOUND=return] dns myhostname
+networks:       files
+
+protocols:      db files
+services:       db files
+ethers:         db files
+rpc:            db files
+
+netgroup:       nis
+```
+
+`/etc/apt/sources.list`:
+
+```
+deb http://deb.debian.org/debian/ buster main
+deb-src http://deb.debian.org/debian/ buster main
+
+deb https://deb.debian.org/debian-security buster-security main contrib
+deb-src https://deb.debian.org/debian-security buster-security main contrib
+
+deb http://security.debian.org/debian-security buster/updates main
+deb-src http://security.debian.org/debian-security buster/updates main
+```

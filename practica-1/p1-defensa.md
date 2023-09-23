@@ -87,3 +87,50 @@ deb-src https://deb.debian.org/debian-security buster-security main contrib
 deb http://security.debian.org/debian-security buster/updates main
 deb-src http://security.debian.org/debian-security buster/updates main
 ```
+### Apartado B
+¿Qué distro y versión tiene la máquina inicialmente entregada?. Actualice su máquina a la última versión estable disponible.
+
+Mostramos la distro actual y su versión con `lsb_release -a`.
+```
+root@debian:/home/lsi# lsb_release -a
+No LSB modules are available.
+Distributor ID:	Debian
+Description:	Debian GNU/Linux 10 (buster)
+Release:	10
+Codename:	buster
+```
+Seguimos la guía sobre como actualizar el sistema de esta [esta pagina](https://www.debian.org/releases/bullseye/amd64/release-notes/ch-upgrading.es.html).
+Podemos mostrar nuestra versión ejecutando `cat /etc/debian_version`.
+
+Para actualizar desde el usuario root:
+
+1. `apt update -y && sudo apt upgrade -y`
+> La opción -y acepta todos los prompts.
+2. `apt dist-upgrade`
+3. Reemplazar la lista de fuentes `/etc/apt/sources.list` con:
+```
+deb http://deb.debian.org/debian/ bullseye main
+deb-src http://deb.debian.org/debian/ bullseye main
+
+deb https://deb.debian.org/debian-security bullseye-security main contrib
+deb-src https://deb.debian.org/debian-security bullseye-security main contrib
+
+# deb http://deb.debian.org/debian/ bullseye-updates main contrib
+# deb-src http://deb.debian.org/debian/ bullseye-updates main contrib
+```
+> Mi instalación dio problemas por culpa de `bullseye-updates`, el profesor me recomendó comentarlo porque no es esencial.
+4. `apt update`
+5. `apt upgrade --without-new-pkgs`
+6. `apt full-upgrade`
+7. `reboot`
+8. Comprobamos que la máquina se actualizó correctamente:
+```
+lsi@debian:~$ lsb_release -a
+No LSB modules are available.
+Distributor ID: Debian
+Description: Debian GNU/Linux 11 (bullseye)
+Release: 11
+Codename: bullseye
+```
+9. Repetimos el proceso para actualizarlo a la ultima versión disponible, en caso de duda consultamos [esta pagina](https://www.debian.org/releases/stable/i386/release-notes/ch-upgrading.es.html#backup).
+

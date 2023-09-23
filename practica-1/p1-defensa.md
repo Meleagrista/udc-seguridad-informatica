@@ -100,12 +100,13 @@ Release:	10
 Codename:	buster
 ```
 Seguimos la guía sobre como actualizar el sistema de esta [esta pagina](https://www.debian.org/releases/bullseye/amd64/release-notes/ch-upgrading.es.html).
+
 Podemos mostrar nuestra versión ejecutando `cat /etc/debian_version`.
 
 Para actualizar desde el usuario root:
 
 1. `apt update -y && sudo apt upgrade -y`
-> La opción -y acepta todos los prompts.
+> La opción -y se usa para aceptar todos los prompts.
 2. `apt dist-upgrade`
 3. Reemplazar la lista de fuentes `/etc/apt/sources.list` con:
 ```

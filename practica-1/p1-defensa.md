@@ -206,7 +206,9 @@ Determine los tiempos aproximados de botado de su _kernel_ y del _userspace_. Ob
 Investigue si alguno de los servicios del sistema falla. Pruebe algunas de las opciones del sistema de registro journald. Obtenga toda la información journald referente al proceso de botado de la máquina. ¿Qué hace el `systemd-timesyncd`?
 1. Comprobar si algún servicio ha fallado con `systemctl list-unit-files --type=service --failed`.
 2. Ver el log de un servicio con `journalctl -u <SERVICE>`.
+> Solo se puede activar con permisos de adminitrador.
 3. Ver el log del boot actual con `journalctl -b`.
+
 `systemd-timesyncd` es un servicio que facilita la sincronización del reloj del sistema con servidores NTP externos de manera automática y eficiente. Cuando este servicio está habilitado y en funcionamiento, se encarga de solicitar información de tiempo a servidores NTP remotos y ajustar el reloj local del sistema en consecuencia.
 
 

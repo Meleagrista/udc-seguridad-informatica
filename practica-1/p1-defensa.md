@@ -199,6 +199,7 @@ Determine los tiempos aproximados de botado de su _kernel_ y del _userspace_. Ob
 1. Ver tiempos aproximados de botado de kernel y userspace con `systemd-analyze`.
 2. Ver relación de tiempos de ejecución y services con `systemd-analyze blame`.
 3. Ver cadena de ejcución de servicios en el mometo de inicio con `systemd-analyze critical-chain`.
+4. 
 ## Apartado E
 Investigue si alguno de los servicios del sistema falla. Pruebe algunas de las opciones del sistema de registro journald. Obtenga toda la información journald referente al proceso de botado de la máquina. ¿Qué hace el `systemd-timesyncd`?
 1. Comprobar si algún servicio ha fallado con `systemctl list-unit-files --type=service --failed`.
@@ -208,4 +209,48 @@ Investigue si alguno de los servicios del sistema falla. Pruebe algunas de las o
 
 `systemd-timesyncd` es un servicio que facilita la sincronización del reloj del sistema con servidores NTP externos de manera automática y eficiente. Cuando este servicio está habilitado y en funcionamiento, se encarga de solicitar información de tiempo a servidores NTP remotos y ajustar el reloj local del sistema en consecuencia.
 
+## Apartado F
+Identifique y cambie los principales parámetros de su segundo interface de red (ens34). Configure un segundo interface lógico. Al terminar, déjelo como estaba.
+1. Ver estado inicial de `ens34`  con `ifconfig ens34`:
+2. Configue la intrfacez de red `ens34` (_pendiente de probar_):
+```
+root@debian:/home/lsi# ifconfig ens34 down
+root@debian:/home/lsi# ifconfig ens34 mtu 1200
+root@debian:/home/lsi# ifconfig ens34 hw ether 00:1e:2e:b5:18:07
+root@debian:/home/lsi# ifconfig ens34 10.11.50.51 netmask 255.255.254.0
+root@debian:/home/lsi# ifconfig ens34 up
+```
+3. Configuración de una nueva interfaz lógica:
+```
+root@debian:/home/lsi# ifconfig ens34:1 192.168.1.1 netmask 255.255.255.0
+root@debian:/home/lsi# ifconfig ens34:1 up
+```
+> Para persistir los cambios debemos hacerlos en `/etc/network/interfaces`, si no un `reboot` debería reestablecer los cambios.
 
+## Apartado G
+¿Qué rutas (routing) están definidas en su sistema?. Incluya una nueva ruta estática a una determinada red.
+1. Mostrar rutas establecidas en el sistema con `ip route show` y `route` (_pendiente de probar_):
+```
+root@debian:/home/lsi# ip route show
+default via 10.11.48.1 dev ens33 onlink 
+10.11.48.0/23 dev ens33 proto kernel scope link src 10.11.48.50 
+10.11.50.0/23 dev ens34 proto kernel scope link src 10.11.50.50 
+169.254.0.0/16 dev ens33 scope link metric 1000
+```
+```
+root@debian:/home/lsi# route
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+default         _gateway        0.0.0.0         UG    0      0        0 ens33
+10.11.48.0      0.0.0.0         255.255.254.0   U     0      0        0 ens33
+10.11.50.0      0.0.0.0         255.255.254.0   U     0      0        0 ens34
+link-local      0.0.0.0         255.255.0.0     U     1000   0        0 ens33
+```
+> `_gateway` en mi consola se muestra como la ip `10.11.48.1`.
+2. Añadir una nueva ruta con `ip route add 10.11.52.0/24 via 10.11.48.1` (_pendiente de probar_).
+
+## Apartado H
+En el apartado d) se ha familiarizado con los services que corren en su sistema. ¿Son necesarios todos ellos?. Si identifica servicios no necesarios, proceda adecuadamente. Una limpieza no le vendrá mal a su equipo, tanto desde el punto de vista de la seguridad, como del rendimiento.
+
+## Apartado I
+Diseñe y configure un pequeño “script” y defina la correspondiente unidad de tipo service para que se ejecute en el proceso de botado de su máquina.

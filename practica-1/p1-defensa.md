@@ -1,6 +1,5 @@
 # PRÁCTICA 1 - CONFIGURACIÓN BÁSICA
-## PARTE 1
-### Apartado A
+## Apartado A
 Configure su máquina virtual de laboratorio con los datos proporcionados por el profesor. Analice los ficheros básicos de configuración (interfaces, hosts, resolv.conf, nsswitch.conf, sources.list, etc.)
 1. Modificar el fichero `/etc/network/interfaces`:
 > Mis IPs son `10.11.49.54` y `10.11.51.54`. La configuración de este fichero dependerá de tus IPs.
@@ -9,21 +8,18 @@ Configure su máquina virtual de laboratorio con los datos proporcionados por el
 # and how to activate them. For more information, see interfaces(5).
 #source /etc/network/interfaces.d/*
 # The loopback network interface
-auto lo ens33
+auto lo ens33 ens34
 iface lo inet loopback
-
 iface ens33 inet static
-        address 10.11.49.54
-        network 10.11.48.0
-        netmask 255.255.254.0
+        address 10.11.49.54/23
+#       network 10.11.48.0
+#       netmask 255.255.254.0
         gateway 10.11.48.1
-	# broadcast 10.11.49.255
-
+        dns-names 10.8.12.47 10.8.12.49 10.8.12.50
 iface ens34 inet static
-	address 10.11.51.54
-	netmask 255.255.254.0
-	network 10.11.50.0
-	# broadcast 10.11.51.255
+        address 10.11.51.54/23
+#       network 10.11.50.0
+#       netmask 255.255.254.0
 ```
 > La red es la `10.11.48.0/23` esto quiere decir todo el segmento comienza en `10.11.48.0` y finaliza en `10.11.49.255`.
 
@@ -87,7 +83,7 @@ deb-src https://deb.debian.org/debian-security buster-security main contrib
 deb http://security.debian.org/debian-security buster/updates main
 deb-src http://security.debian.org/debian-security buster/updates main
 ```
-### Apartado B
+## Apartado B
 ¿Qué distro y versión tiene la máquina inicialmente entregada?. Actualice su máquina a la última versión estable disponible.
 
 Mostramos la distro actual y su versión con `lsb_release -a`.
@@ -135,7 +131,7 @@ Codename: bullseye
 ```
 9. Repetimos el proceso para actualizarlo a la ultima versión disponible, en caso de duda consultamos [esta pagina](https://www.debian.org/releases/stable/i386/release-notes/ch-upgrading.es.html#backup).
 
-### Apartado C
+## Apartado C
 Identifique la secuencia completa de arranque de una máquina basada en la distribución de referencia (desde la pulsación del botón de arranque hasta la pantalla de login). ¿Qué target por defecto tiene su máquina? ¿Cómo podría cambiar el target de arranque? ¿Qué targets tiene su sistema y en qué estado se encuentran? ¿Y los services? Obtenga la relación de servicios de su sistema y su estado. ¿Qué otro tipo de unidades existen?
 
 1. Ver el target predeterminado con `systemctl get-default`.
@@ -198,11 +194,12 @@ path
 slice
 scope
 ```
-### Apartado D
+## Apartado D
 Determine los tiempos aproximados de botado de su _kernel_ y del _userspace_. Obtenga la relación de los tiempos de ejecución de los services de su sistema.
 1. Ver tiempos aproximados de botado de kernel y userspace con `systemd-analyze`.
 2. Ver relación de tiempos de ejecución y services con `systemd-analyze blame`.
-### Apartado E
+3. Ver cadena de ejcución de servicios en el mometo de inicio con `systemd-analyze critical-chain`.
+## Apartado E
 Investigue si alguno de los servicios del sistema falla. Pruebe algunas de las opciones del sistema de registro journald. Obtenga toda la información journald referente al proceso de botado de la máquina. ¿Qué hace el `systemd-timesyncd`?
 1. Comprobar si algún servicio ha fallado con `systemctl list-unit-files --type=service --failed`.
 2. Ver el log de un servicio con `journalctl -u <SERVICE>`.

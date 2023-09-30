@@ -5,21 +5,26 @@ Un `target` en un sistema Linux es un estado o nivel de ejecución que define qu
 
 Para más información se puede visitar la [pagina siguiente](https://www.baeldung.com/linux/systemd-target-multi-user#:~:text=Targets%20are%20groupings%20of%20resources,poweroff) y para mas información sobre los comandos la [pagina siguiente](https://documentation.suse.com/smart/systems-management/html/reference-managing-systemd-targets-systemctl/index.html#:~:text=systemd%20targets%20are%20different%20states,network%20and%20a%20graphical%20environment.).
 
+### Liberar espacio
+Como estamos usando `multi-user.target`, ya no es tan necesario tener una interfaz, para liberar mas espacio y acelarar el tiempo de boot podemos eliminar el DE (Desktop Enviorement), en este caso es GNOME.
+1. `sudo apt-get autoremove gdm3`
+2. `sudo apt-get autoremove --purge gnome*`
+3. `reboot`
+
+En mi caso ya tenía problemas previos con un programa: `tracker` y sus hijos `tracker-extract` y `tracker-miner-fs`. Entonces, además de causar que mi tiempo de boot fuese de mas de un minuto como se ve en [este apartado](https://github.com/Meleagrista/legislacion-seguridad-informatica/blob/main/practica-1/p1-defensa.md#apartado-d). También causó problemas al intentar purgar los archivos relacionados con GNOME.
+- `sudo apt remove tracker tracker-extract tracker-miner-fs`
+
+Tras eliminarlo pude seguir desintalando GNOME y como efecto secundaio corrigio los errores que causaban la inflacción de tiempo de boot.
+
+> A DE is 'just' a set of separated programs to do specific tasks. Building blocks as it were. The window manager could be considered the floor of a house and the extra tools like file manager, panel, and notifications are like the appliances in your home. You could live in a single empty room, if you wanted. (งツ)ว
+
+> You just have to manually do things that you are used to being automatic, such as... mounting of USB drives you insert, changing sound inputs when you plug in your heaphones... It's not hard to just use a WM, but a DE is sort of a collection of extras that everyone was adding to their wm anyway.
+
 # Información sobre los servicios
 | `sytemctl mask` | `systemctl disable` |
 | -------- | ------- |
 | Adding a mask to a service creates a _symlink_ from `/etc/systemd/system` to `/dev/null`. | Disabling a service removes the _symlink_ from `/lib/systemd/system`. |
 | Masking a service makes it permanently unusable unless we unmask it. If we boot with a unit masked, it will not run even to satisfy dependencies. | A disabled service doesn’t automatically start at boot time. But, we can start it manually. Also, other services that need a disabled service can manually enable it. |
-
-Para liberar mas espacio y acelarar el tiempo de boot podemos eliminar el DE (Desktop Enviorement), en este caso es GNOME.
-1. `sudo apt-get autoremove gdm3`
-2. `sudo apt-get autoremove --purge gnome*`
-3. `reboot`
-En mi caso ya tenía problemas previos con un programa: `tracker` y sus hijos `tracker-extract` y `tracker-miner-fs`. Entonces, además de causar que mi tiempo de boot fuese de mas de un minuto como se ve en `p1-defensa.md`
-
-> A DE is 'just' a set of separated programs to do specific tasks. Building blocks as it were. The window manager could be considered the floor of a house and the extra tools like file manager, panel, and notifications are like the appliances in your home. You could live in a single empty room, if you wanted. (งツ)ว
-
-> You just have to manually do things that you are used to being automatic, such as... mounting of USB drives you insert, changing sound inputs when you plug in your heaphones... It's not hard to just use a WM, but a DE is sort of a collection of extras that everyone was adding to their wm anyway.
 
 ## `accounts-daemon` - Pending...
 The `AccountService` project provides a set of D-Bus interfaces for querying and manipulating user account information and an implementation of these interfaces, based on the `useradd`, `usermod` and `userdel` commands, `accounts-daemon.service` is a potential security risk. It is part of `AccountsService`, which allows programs to get and manipulate user account information. I can't think of a good reason to allow this kind of behind-my-back operations, so I mask it.

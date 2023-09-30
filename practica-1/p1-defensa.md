@@ -324,5 +324,7 @@ link-local      0.0.0.0         255.255.0.0     U     1000   0        0 ens33
 ## Apartado H
 En el apartado d) se ha familiarizado con los services que corren en su sistema. ¿Son necesarios todos ellos?. Si identifica servicios no necesarios, proceda adecuadamente. Una limpieza no le vendrá mal a su equipo, tanto desde el punto de vista de la seguridad, como del rendimiento.
 
+Antes de borrar ningún servicio es recomendable ver si este posee alguna dependencia que puedo afectar a la maquina con `systemctl list-dependencies <SERVICIO>`.
+
 ## Apartado I
 Diseñe y configure un pequeño “script” y defina la correspondiente unidad de tipo service para que se ejecute en el proceso de botado de su máquina.

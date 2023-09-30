@@ -11,6 +11,16 @@ Para más información se puede visitar la [pagina siguiente](https://www.baeldu
 | Adding a mask to a service creates a _symlink_ from `/etc/systemd/system` to `/dev/null`. | Disabling a service removes the _symlink_ from `/lib/systemd/system`. |
 | Masking a service makes it permanently unusable unless we unmask it. If we boot with a unit masked, it will not run even to satisfy dependencies. | A disabled service doesn’t automatically start at boot time. But, we can start it manually. Also, other services that need a disabled service can manually enable it. |
 
+Para liberar mas espacio y acelarar el tiempo de boot podemos eliminar el DE (Desktop Enviorement), en este caso es GNOME.
+1. `sudo apt-get autoremove gdm3`
+2. `sudo apt-get autoremove --purge gnome*`
+3. `reboot`
+En mi caso ya tenía problemas previos con un programa: `tracker` y sus hijos `tracker-extract` y `tracker-miner-fs`. Entonces, además de causar que mi tiempo de boot fuese de mas de un minuto como se ve en `p1-defensa.md`
+
+> A DE is 'just' a set of separated programs to do specific tasks. Building blocks as it were. The window manager could be considered the floor of a house and the extra tools like file manager, panel, and notifications are like the appliances in your home. You could live in a single empty room, if you wanted. (งツ)ว
+
+> You just have to manually do things that you are used to being automatic, such as... mounting of USB drives you insert, changing sound inputs when you plug in your heaphones... It's not hard to just use a WM, but a DE is sort of a collection of extras that everyone was adding to their wm anyway.
+
 ## `accounts-daemon` - Pending...
 The `AccountService` project provides a set of D-Bus interfaces for querying and manipulating user account information and an implementation of these interfaces, based on the `useradd`, `usermod` and `userdel` commands, `accounts-daemon.service` is a potential security risk. It is part of `AccountsService`, which allows programs to get and manipulate user account information. I can't think of a good reason to allow this kind of behind-my-back operations, so I mask it.
 As a general rule, if something is DBus based (and accounts-daemon is), it's safe to turn off automatic startup of it, as it will just get started by DBus whenever something actually needs it.
@@ -112,5 +122,6 @@ The USB multiplexor daemon, is in charge of coordinating access to iPhone and iP
 This package includes udev rules to start the daemon when a supported device is plugged in, and stop it when all devices are removed.
 
 La máquina no usa Bluetooth, pero tiene ciertas dependencies.
-# Semana 2
+
+# Script
 Aun pendiente de revisar, pero [esta pagina](http://trajano.us.es/~fjfj/shell/shellscript.htm) tiene buena pinta para prender sobre porgramación shell.

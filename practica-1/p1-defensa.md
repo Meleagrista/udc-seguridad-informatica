@@ -321,10 +321,40 @@ link-local      0.0.0.0         255.255.0.0     U     1000   0        0 ens33
 > `_gateway` en mi consola se muestra como la ip `10.11.48.1`.
 2. Añadir una nueva ruta con `ip route add 10.11.52.0/24 via 10.11.48.1` (_pendiente de probar_).
 
-## Apartado H
+## Apartado H - Pending...
 En el apartado d) se ha familiarizado con los services que corren en su sistema. ¿Son necesarios todos ellos?. Si identifica servicios no necesarios, proceda adecuadamente. Una limpieza no le vendrá mal a su equipo, tanto desde el punto de vista de la seguridad, como del rendimiento.
 
 Antes de borrar ningún servicio es recomendable ver si este posee alguna dependencia que puedo afectar a la maquina con `systemctl list-dependencies <SERVICIO> --all --reverse`.
 
 ## Apartado I
 Diseñe y configure un pequeño “script” y defina la correspondiente unidad de tipo service para que se ejecute en el proceso de botado de su máquina.
+
+1. He creado el script `/usr/local/bin/notify` que se conecta con un bot de Telegram:
+```
+#!/bin/bash
+API_KEY=XXXXXXXXXXXX
+CHAT_ID=XXXXXXXXXXXX
+
+if [ "$1" == "--boot" ]; then MESSAGE="`/bin/date +'%d/%m/%Y %R:%S '`-> Iniciada máquina de Álvaro."; else MESSAGE=$1; fi
+
+MESSAGE=${MESSAGE:-"Vaya, no hay mensaje."}
+
+wget -qO- "https://api.telegram.org/bot$API_KEY/sendMessage?chat_id=$CHAT_ID&text=$MESSAGE" &> /dev/null
+```
+2. Y un servicio `/etc/systemd/system/notify-boot.service` que me avisa de que la máquina ha sido encendida:
+```
+[Unit]
+Description=Custom service that notifies through Telegram on startup.
+After=network.target
+
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=5s
+User=lsi
+ExecStart=notify --boot
+
+[Install]
+WantedBy=multi-user.target
+```
+3. Y se activa con el comando `systemctl enable notify-boot.service`.

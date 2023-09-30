@@ -358,3 +358,20 @@ ExecStart=notify --boot
 WantedBy=multi-user.target
 ```
 3. Y se activa con el comando `systemctl enable notify-boot.service`.
+
+## Apartado J
+Identifique las conexiones de red abiertas a y desde su equipo.
+- Para leer las conexiones abiertas se ejecuta el comando `netstat -netua`.
+
+## Apartado K
+Nuestro sistema es el encargado de gestionar la CPU, memoria, red, etc., como soporte a los datos y procesos. Monitorice en “tiempo real” la información relevante de los procesos del sistema y los recursos consumidos. Monitorice en “tiempo real” las conexiones de su sistema.
+
+1. Procesos del sistema en *tiempo real*: `top`
+2. Conexiones del sistema en *tiempo real*: `netstat -netuac`
+
+## Apartado L
+Un primer nivel de filtrado de servicios los constituyen los tcp-wrappers. Configure el tcp-
+wrapper de su sistema (basado en los ficheros hosts.allow y hosts.deny) para permitir
+conexiones SSH a un determinado conjunto de IPs y denegar al resto. ¿Qué política general de
+filtrado ha aplicado?. ¿Es lo mismo el tcp-wrapper que un firewall?. Procure en este proceso no
+perder conectividad con su máquina. No se olvide que trabaja contra ella en remoto por ssh.

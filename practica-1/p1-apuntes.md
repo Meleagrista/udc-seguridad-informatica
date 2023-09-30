@@ -12,6 +12,10 @@ Para más información se puede visitar la [pagina siguiente](https://www.baeldu
 ## Services
 *`accounts-daemon`*: The `AccountService` project provides a set of D-Bus interfaces for querying and manipulating user account information and an implementation of these interfaces, based on the `useradd`, `usermod` and `userdel` commands, `accounts-daemon.service` is a potential security risk. It is part of `AccountsService`, which allows programs to get and manipulate user account information. I can't think of a good reason to allow this kind of behind-my-back operations, so I mask it.
 As a general rule, if something is DBus based (and accounts-daemon is), it's safe to turn off automatic startup of it, as it will just get started by DBus whenever something actually needs it.
+```
+accounts-daemon.service
+○ └─graphical.target
+```
 
 For this particular case, the `accounts-daemon` is the executable component of the `AccountsService`, which handles non-priveleged listing of account information (because apparently using `libc` routines for this like you should is too hard for GNOME developers to do). It may or may not be used by the display manager (login screen), the screensaver, and the account management tools in your desktop environment. As mentioned above, DBus starts requested services on-demand, so this is something that you can definitely disable automatic startup of, but it probably will be started by other components of your system (especially if you're using GNOME or KDE for your desktop).
 
@@ -24,8 +28,16 @@ AppArmor is a great tool to secure and protect your Ubuntu and Debian systems. I
 2. Hacer la función de DNS (cada nodo es accesible como: nombre-nodo.local).
 3. Hacer una lista de los servicios y acceder a ellos fácilmente (las máquinas de la red local son informadas de la llegada o salida de un servicio).
 
-- `systemctl disable avahi-daemon.service`
-- `systemctl mask avahi-daemon.service`
+- `systemctl disable accounts-daemon && systemctl mask accounts-daemon`
+
+```
+avahi-daemon.service
+● ├─cups-browsed.service
+● │ └─multi-user.target
+○ │   └─graphical.target
+● └─multi-user.target
+○   └─graphical.target
+```
 
 *`NetworkManager`*: NetworkManager attempts to keep an active network connection available at all times.
 
@@ -40,16 +52,33 @@ Avoid NM like the plague. It's another effort from the developers to Fisher-Pric
 
 *`cups`*: The Debian printing system has undergone many significant changes over the past few years, with much of the printer management taking advantage of the advances in modern printer technology and the proliferation of IPP printers.
 > No se añade el `.service`, el comando es `systemctl disable cups && systemctl mask cups`.
+```
+cups.service
+● ├─cups-browsed.service
+● │ └─multi-user.target
+○ │   └─graphical.target
+● └─multi-user.target
+○   └─graphical.target
+```
 
 *`cups-browsed`*: A daemon for browsing the Bonjour broadcasts of shared, remote CUPS printers
 
 *`ModemManager`*: ModemManager es un demonio activado por DBus que controla dispositivos y conexiones de banda ancha móvil (2G/3G/4G). Tanto si se trata de dispositivos integrados, llaves USB, teléfonos Bluetooth o dispositivos profesionales RS232/USB con fuentes de alimentación externas, ModemManager es capaz de preparar y configurar los módems y establecer conexiones con ellos.
+```
+ModemManager.service
+● └─multi-user.target
+○   └─graphical.target
+```
 
 *`bluetooth`*: la máquina no usa Bluetooth, pero tiene ciertas dependencies.
 > El comando es `systemctl disable bluetooth && systemctl mask bluetooth`.
 
 *`switcheroo-control`*: For systems that have both an integrated GPU and a dedicated GPU, this package by default will force the integrated GPU to be used to save power.
 > Servicio para comprobar disponibilidad de dual-GPU (tarjeta gráfica dual).
+```
+switcheroo-control.service
+○ └─graphical.target
+```
 
 # Semana 2
 Aun pendiente de revisar, pero [esta pagina](http://trajano.us.es/~fjfj/shell/shellscript.htm) tiene buena pinta para prender sobre porgramación shell.

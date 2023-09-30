@@ -197,9 +197,81 @@ scope
 ## Apartado D
 Determine los tiempos aproximados de botado de su _kernel_ y del _userspace_. Obtenga la relación de los tiempos de ejecución de los services de su sistema.
 1. Ver tiempos aproximados de botado de kernel y userspace con `systemd-analyze`.
+```
+lsi@debian:~$ systemd-analyze
+Startup finished in 3.557s (kernel) + 1min 31.686s (userspace) = 1min 35.244s
+multi-user.target reached after 1min 31.646s in userspace.
+```
+> Algunos servicios me dan error, por eso el tiempo de carga tan lento.
 2. Ver relación de tiempos de ejecución y services con `systemd-analyze blame`.
+```
+lsi@debian:~$ systemd-analyze blame
+13.800s apparmor.service
+ 5.416s e2scrub_reap.service
+ 2.847s dev-sda1.device
+ 2.704s polkit.service
+ 2.688s ifupdown-pre.service
+ 2.641s fwupd-refresh.service
+ 1.998s systemd-logind.service
+ 1.841s avahi-daemon.service
+ 1.814s networking.service
+ 1.783s dbus.service
+ 1.620s NetworkManager.service
+ 1.117s systemd-journal-flush.service
+ 1.045s wpa_supplicant.service
+  955ms systemd-udevd.service
+  876ms udisks2.service
+  828ms systemd-udev-trigger.service
+  822ms systemd-timesyncd.service
+  736ms systemd-journald.service
+  677ms keyboard-setup.service
+  585ms ModemManager.service
+  474ms NetworkManager-wait-online.service
+  471ms apt-daily.service
+  462ms apt-daily-upgrade.service
+  403ms ssh.service
+  396ms systemd-random-seed.service
+  358ms systemd-modules-load.service
+  325ms systemd-tmpfiles-setup.service
+  270ms man-db.service
+  239ms rsyslog.service
+  225ms plymouth-start.service
+  203ms systemd-sysusers.service
+  192ms user@1000.service
+  183ms systemd-update-utmp.service
+  171ms logrotate.service
+  159ms systemd-tmpfiles-setup-dev.service
+  147ms modprobe@dm_mod.service
+  139ms run-vmblock\x2dfuse.mount
+  130ms upower.service
+  122ms dev-mqueue.mount
+  122ms sys-kernel-debug.mount
+  121ms sys-kernel-tracing.mount
+```
 3. Ver cadena de ejcución de servicios en el mometo de inicio con `systemd-analyze critical-chain`.
-4. 
+```
+lsi@debian:~$ systemd-analyze critical-chain
+The time when unit became active or started is printed after the "@" character.
+The time the unit took to start is printed after the "+" character.
+
+multi-user.target @1min 31.646s
+└─ssh.service @19.618s +403ms
+  └─network.target @19.576s
+    └─NetworkManager.service @17.955s +1.620s
+      └─dbus.service @16.150s +1.783s
+        └─basic.target @16.103s
+          └─sockets.target @16.095s
+            └─dbus.socket @16.094s
+              └─sysinit.target @16.071s
+                └─apparmor.service @2.270s +13.800s
+                  └─local-fs.target @2.261s
+                    └─run-credentials-systemd\x2dtmpfiles\x2dsetup.service.mount @3.532s
+                      └─local-fs-pre.target @2.261s
+                        └─keyboard-setup.service @1.583s +677ms
+                          └─systemd-journald.socket @1.574s
+                            └─-.mount @1.557s
+                              └─-.slice @1.557s
+``` 
 ## Apartado E
 Investigue si alguno de los servicios del sistema falla. Pruebe algunas de las opciones del sistema de registro journald. Obtenga toda la información journald referente al proceso de botado de la máquina. ¿Qué hace el `systemd-timesyncd`?
 1. Comprobar si algún servicio ha fallado con `systemctl list-unit-files --type=service --failed`.

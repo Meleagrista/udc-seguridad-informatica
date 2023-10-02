@@ -103,10 +103,8 @@ La máquina no usa Bluetooth, pero tiene ciertas dependencies.
 ## `switcheroo-control` - Pending...
 For systems that have both an integrated GPU and a dedicated GPU, this package by default will force the integrated GPU to be used to save power.
 > Servicio para comprobar disponibilidad de dual-GPU (tarjeta gráfica dual).
-```
-switcheroo-control.service
-○ └─graphical.target
-```
+
+> Parece que tras el borrado de GNOME ya no está presente este servicio.
 
 ## `configure-printer@` - mask
 `system-config-printer` is an administration tool that functions in a similar way to the CUPS web interface for the configuration of printers and print queues, but it is a native application rather than a web page.
@@ -136,6 +134,15 @@ The USB multiplexor daemon, is in charge of coordinating access to iPhone and iP
 This package includes udev rules to start the daemon when a supported device is plugged in, and stop it when all devices are removed.
 
 La máquina no usa Bluetooth, pero tiene ciertas dependencies.
+
+## `anacron.service` && `cron.service` - disable
+Similar to the cron service, the anacron service runs applications or scripts at specific times and dates. This allows for reliable unattended system operation – scheduled events are not missed if the system goes down – instead, they are run as soon as possible after their scheduled time. Candidates for an anacron action are often system administration activies, such as log rotation, that must be performed, even if late.
+
+Unlike the cron service, anacron will not miss the execution of a scheduled job, even if the system is powered off. The activity will be performed when the system is next available. This makes anacron the preferred choice to initiate essential system administration tasks such as backup or disk space recovery.
+
+## `getty` - enabled
+Short for "get tty", is a Unix program running on a host computer that manages physical or virtual terminals (TTYs). When it detects a connection, it prompts for a username and runs the 'login' program to authenticate the user.
+> `getty` is the process that manages logins on the console and on serial ports, if any. It's generally not safe to disable this, as console access is what we go to when other means of accessing a server fail.
 
 # Script
 Aun pendiente de revisar, pero [esta pagina](http://trajano.us.es/~fjfj/shell/shellscript.htm) tiene buena pinta para prender sobre porgramación shell.

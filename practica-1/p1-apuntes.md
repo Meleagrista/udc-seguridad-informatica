@@ -145,10 +145,66 @@ Unlike the cron service, anacron will not miss the execution of a scheduled job,
 Short for "get tty", is a Unix program running on a host computer that manages physical or virtual terminals (TTYs). When it detects a connection, it prompts for a username and runs the 'login' program to authenticate the user.
 > `getty` is the process that manages logins on the console and on serial ports, if any. It's generally not safe to disable this, as console access is what we go to when other means of accessing a server fail.
 
+## Otros trucos para bajar el tiempo
+
+`journalctl --vacuum-size=1G --vacuum-time=5d --vacuum-files=5` 
+
+Limita el jorunalctl : Hace que el tamaño máximo de los archivos sea 1GB (que eso no influye nunca porque suele ser menos), que el archivo más antiguo sea de hace 5 días y que haya como mucho 5 archivos de journal
+
+
 # Script
 Aun pendiente de revisar, pero [esta pagina](http://trajano.us.es/~fjfj/shell/shellscript.htm) tiene buena pinta para prender sobre porgramación shell.
 
+# Rsyslog
 
-## `journalctl --vacuum-size=1G --vacuum-time=5d --vacuum-files=5` 
+> Mandar logs a los compañeros, separados sin mezlcar
 
-Limita el jorunalctl : Hace que el tamaño máximo de los archivos sea 1GB (que eso no influye nunca porque suele ser menos), que el archivo más antiguo sea de hace 5 días y que haya como mucho 5 archivos de journal
+
+El uso de Rsyslog en sistemas Unix o Linux implica configurar su funcionamiento para recopilar, filtrar y enviar registros según sus necesidades específicas. A continuación, te proporciono una guía básica para empezar a usar Rsyslog:
+
+1. Instalación:
+   Asegúrate de que Rsyslog esté instalado en tu sistema. Puedes verificar su presencia ejecutando el siguiente comando en la terminal:
+
+   ```
+   sudo apt-get install rsyslog  # Para sistemas basados en Debian/Ubuntu
+   ```
+
+2. Configuración:
+   La configuración principal de Rsyslog se encuentra en el archivo de configuración `/etc/rsyslog.conf` o en archivos de configuración en el directorio `/etc/rsyslog.d/`. Puedes editar estos archivos según tus necesidades.
+
+   Por ejemplo, puedes abrir el archivo de configuración principal con un editor de texto:
+
+   ```
+   sudo nano /etc/rsyslog.conf
+   ```
+
+   O si prefieres usar archivos de configuración separados:
+
+   ```
+   sudo nano /etc/rsyslog.d/mi_configuracion.conf
+   ```
+
+3. Definir reglas de registro:
+   En el archivo de configuración, puedes definir reglas que indiquen a Rsyslog qué registros recopilar y cómo manejarlos. Aquí hay un ejemplo de una regla simple para registrar mensajes del kernel en un archivo de registro:
+
+   ```
+   # Registra los mensajes del kernel en /var/log/kernel.log
+   kern.* /var/log/kernel.log
+   ```
+
+4. Reiniciar el servicio:
+   Después de realizar cambios en la configuración, reinicia el servicio Rsyslog para que los cambios surtan efecto:
+
+   ```
+   sudo systemctl restart rsyslog   # Para sistemas con systemd
+   ```
+
+5. Ver registros:
+   Puedes ver los registros recopilados en los archivos de registro configurados. Por ejemplo, si configuraste Rsyslog para registrar mensajes del kernel en `/var/log/kernel.log`, puedes verlos con comandos como `cat`, `tail`, `less`, o herramientas de visualización de registros como `less` o `grep`.
+
+   ```
+   cat /var/log/kernel.log
+   ```
+
+
+

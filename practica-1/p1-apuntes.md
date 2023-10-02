@@ -40,7 +40,7 @@ accounts-daemon.service
 ```
 For this particular case, the `accounts-daemon` is the executable component of the `AccountsService`, which handles non-priveleged listing of account information (because apparently using `libc` routines for this like you should is too hard for GNOME developers to do). It may or may not be used by the display manager (login screen), the screensaver, and the account management tools in your desktop environment. As mentioned above, DBus starts requested services on-demand, so this is something that you can definitely disable automatic startup of, but it probably will be started by other components of your system (especially if you're using GNOME or KDE for your desktop).
 
-## `apparmor` - Pending...
+## `apparmor` - disable
 `AppArmor` is a Mandatory Access Control framework. When enabled, AppArmor confines programs according to a set of rules that specify what files a given program can access. This proactive approach helps protect the system against both known and unknown vulnerabilities.
 
 AppArmor is a great tool to secure and protect your Ubuntu and Debian systems. It could, however, be a little bit restrictive and cause unnecessary problems in some situations.

@@ -100,7 +100,7 @@ ModemManager.service
 ## `bluetooth` - disable
 La máquina no usa Bluetooth, pero tiene ciertas dependencies.
 
-## `switcheroo-control` - Pending...
+## `switcheroo-control`
 For systems that have both an integrated GPU and a dedicated GPU, this package by default will force the integrated GPU to be used to save power.
 > Servicio para comprobar disponibilidad de dual-GPU (tarjeta gráfica dual).
 

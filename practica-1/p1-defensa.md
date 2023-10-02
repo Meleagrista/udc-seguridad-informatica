@@ -333,10 +333,24 @@ link-local      0.0.0.0         255.255.0.0     U     1000   0        0 ens33
 > `_gateway` en mi consola se muestra como la ip `10.11.48.1`.
 2. Añadir una nueva ruta con `ip route add 10.11.53.0/24 via 10.11.48.1`.
 
-## Apartado H - Pending...
+## Apartado H
 En el apartado d) se ha familiarizado con los services que corren en su sistema. ¿Son necesarios todos ellos?. Si identifica servicios no necesarios, proceda adecuadamente. Una limpieza no le vendrá mal a su equipo, tanto desde el punto de vista de la seguridad, como del rendimiento.
 
-Antes de borrar ningún servicio es recomendable ver si este posee alguna dependencia que puedo afectar a la maquina con `systemctl list-dependencies <SERVICIO> --all --reverse`.
+- `systemctl disable apparmor`
+- `systemctl mask avahi-daemon`
+- `systemctl disable NetworkManager`
+- `systemctl disable cups`
+- `systemctl disable cups-browsed`
+- `systemctl disable ModemManager`
+- `systemctl disable bluetooth`
+- `systemctl mask configure-printer@`
+- `systemctl mask display-manager`
+- `systemctl mask nm-priv-helper`
+- `systemctl mask saned@.service`
+- `systemctl mask usb_modeswitch`
+- `systemctl mask usbmuxd`
+
+Antes de borrar ningún servicio es recomendable ver si este posee alguna dependencia que puedo afectar a la maquina con `systemctl list-dependencies <SERVICIO> [--all] [--reverse]`.
 
 ## Apartado I
 Diseñe y configure un pequeño “script” y defina la correspondiente unidad de tipo service para que se ejecute en el proceso de botado de su máquina.
@@ -371,19 +385,63 @@ WantedBy=multi-user.target
 ```
 3. Y se activa con el comando `systemctl enable notify-boot.service`.
 
-## Apartado J
+## Apartado J - Pending...
 Identifique las conexiones de red abiertas a y desde su equipo.
 - Para leer las conexiones abiertas se ejecuta el comando `netstat -netua`.
 
-## Apartado K
+## Apartado K - Pending...
 Nuestro sistema es el encargado de gestionar la CPU, memoria, red, etc., como soporte a los datos y procesos. Monitorice en “tiempo real” la información relevante de los procesos del sistema y los recursos consumidos. Monitorice en “tiempo real” las conexiones de su sistema.
 
 1. Procesos del sistema en *tiempo real*: `top`
 2. Conexiones del sistema en *tiempo real*: `netstat -netuac`
 
-## Apartado L
+## Apartado L - Pending...
 Un primer nivel de filtrado de servicios los constituyen los tcp-wrappers. Configure el tcp-
 wrapper de su sistema (basado en los ficheros hosts.allow y hosts.deny) para permitir
 conexiones SSH a un determinado conjunto de IPs y denegar al resto. ¿Qué política general de
 filtrado ha aplicado?. ¿Es lo mismo el tcp-wrapper que un firewall?. Procure en este proceso no
 perder conectividad con su máquina. No se olvide que trabaja contra ella en remoto por ssh.
+
+1. `/etc/hosts.allow`: El sistema comprueba primero este archivo para las conexiones tcp.
+2. `/etc/hosts.deny`: Si la IP desde la que se están intentando conectar a nuestra máquina no coincide con ninguna en `/etc/hosts.allow`, se comprueba si está denegada aquí.
+
+## Apartado M
+Existen múltiples paquetes para la gestión de logs (syslog, syslog-ng, rsyslog). Utilizando el rsyslog pruebe su sistema de log local.
+```
+lsi@debian:~$ logger "logger de util-linux 2.38.1"
+root@debian:/home/lsi# tail -2 /var/log/syslog
+2023-10-02 T18:12:22.339138+02:00 debian systemd-timesyncd[571]: Timed out waiting for reply from 178.215.228.24:123 (3.debian.pool.ntp.org).
+2023-10-02 T18:15:40.957900+02:00 debian lsi: logger de util-linux 2.38.1
+```
+> `tail -2` devuelve las dos últimas líneas de un fichero.
+
+## Apatado N - Pending...
+Configure IPv6 6to4 y pruebe ping6 y ssh sobre dicho protocolo. ¿Qué hace su tcp-wrapper en las conexiones ssh en IPv6? Modifique su tcp-wapper siguiendo el criterio del apartado h). ¿Necesita IPv6?. ¿Cómo se deshabilita IPv6 en su equipo?
+
+1. Añadir a `/etc/network/interfaces` la configuración de la nueva interfaz:
+```
+auto 6to4
+iface 6to4 inet6 v4tunnel
+	pre-up modprobe ipv6
+	address 2002:a0b:3032::1
+	netmask 16
+	gateway ::10.11.48.1
+	endpoint any
+	local 10.11.48.50
+```
+2. Activar la interfaz con `ifup 6to4`.
+3. Probamos a hacer un `ping6`.
+4. Añadimos a `/etc/hosts.allow`:
+```
+sshd: [2002:a0b:3032::1]/48, [2002:a0b:316a::1]/48
+```
+> IP propia (ens33) + IP compañero (ens33).
+5. Probamos `ssh`:
+> No es necesario en nuestra red interna el uso de IPv6 gracias a nuestra interfaz 6to4.
+6. Se dehabilita añadiendo estas líneas en el fichero `/etc/sysctl.conf`:
+```
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1
+```
+7. Aplicar los cambios con `sysctl -p`.

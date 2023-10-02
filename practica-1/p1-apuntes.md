@@ -1,3 +1,8 @@
+# Información sobre las interfaces
+- `ifconfig ens34 mtu 1200`: para mas información ver [este enlace](https://netpro.com.mx/manipulacion-del-mtu-del-paquete-ip/)
+- `ifconfig ens34 hw ether 00:1e:2e:b5:18:07`: para mas información ver [este enlace](http://www.microhowto.info/howto/change_the_mac_address_of_an_ethernet_interface.html)
+- `ifconfig ens34 10.11.50.51 netmask 255.255.254.0`: para mas información ver [este enlace](https://library.netapp.com/ecmdocs/ECMP1155586/html/GUID-B02ACB37-C1CD-44E7-9AF7-ABB50F2E42BB.html)
+
 # Información sobre los target
 Un `target` en un sistema Linux es un estado o nivel de ejecución que define qué servicios y unidades se inician durante el proceso de arranque del sistema. Representa un conjunto específico de funciones y servicios necesarios para un propósito determinado, como el inicio en modo multiusuario o de emergencia.
 

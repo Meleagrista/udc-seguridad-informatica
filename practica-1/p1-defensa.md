@@ -281,9 +281,21 @@ Investigue si alguno de los servicios del sistema falla. Pruebe algunas de las o
 
 `systemd-timesyncd` es un servicio que facilita la sincronización del reloj del sistema con servidores NTP externos de manera automática y eficiente. Cuando este servicio está habilitado y en funcionamiento, se encarga de solicitar información de tiempo a servidores NTP remotos y ajustar el reloj local del sistema en consecuencia.
 
-## Apartado F - Pending...
+## Apartado F
 Identifique y cambie los principales parámetros de su segundo interface de red (ens34). Configure un segundo interface lógico. Al terminar, déjelo como estaba.
 1. Ver estado inicial de `ens34`  con `ifconfig ens34`:
+```
+lsi@debian:~$ ifconfig ens34
+ens34: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 10.11.51.54  netmask 255.255.254.0  broadcast 10.11.51.255
+        inet6 fe80::250:56ff:fe97:b5d6  prefixlen 64  scopeid 0x20<link>
+        ether 00:50:56:97:b5:d6  txqueuelen 1000  (Ethernet)
+        RX packets 200  bytes 47180 (46.0 KiB)
+        RX errors 0  dropped 66  overruns 0  frame 0
+        TX packets 11  bytes 866 (866.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+        device interrupt 16  base 0x2080
+```
 2. Configue la intrfacez de red `ens34`:
 ```
 root@debian:/home/lsi# ifconfig ens34 down
@@ -301,25 +313,25 @@ root@debian:/home/lsi# ifconfig ens34:1 up
 
 ## Apartado G
 ¿Qué rutas (routing) están definidas en su sistema?. Incluya una nueva ruta estática a una determinada red.
-1. Mostrar rutas establecidas en el sistema con `ip route show` y `route` (_pendiente de probar_):
+1. Mostrar rutas establecidas en el sistema con `ip route show` y `route`:
 ```
-root@debian:/home/lsi# ip route show
-default via 10.11.48.1 dev ens33 onlink 
-10.11.48.0/23 dev ens33 proto kernel scope link src 10.11.48.50 
-10.11.50.0/23 dev ens34 proto kernel scope link src 10.11.50.50 
+lsi@debian:~$ ip route show
+default via 10.11.48.1 dev ens33 onlink
+10.11.48.0/23 dev ens33 proto kernel scope link src 10.11.49.54
+10.11.50.0/23 dev ens34 proto kernel scope link src 10.11.51.54
 169.254.0.0/16 dev ens33 scope link metric 1000
 ```
 ```
-root@debian:/home/lsi# route
+lsi@debian:~$ route
 Kernel IP routing table
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
-default         _gateway        0.0.0.0         UG    0      0        0 ens33
+default         10.11.48.1      0.0.0.0         UG    0      0        0 ens33
 10.11.48.0      0.0.0.0         255.255.254.0   U     0      0        0 ens33
 10.11.50.0      0.0.0.0         255.255.254.0   U     0      0        0 ens34
 link-local      0.0.0.0         255.255.0.0     U     1000   0        0 ens33
 ```
 > `_gateway` en mi consola se muestra como la ip `10.11.48.1`.
-2. Añadir una nueva ruta con `ip route add 10.11.52.0/24 via 10.11.48.1` (_pendiente de probar_).
+2. Añadir una nueva ruta con `ip route add 10.11.53.0/24 via 10.11.48.1`.
 
 ## Apartado H - Pending...
 En el apartado d) se ha familiarizado con los services que corren en su sistema. ¿Son necesarios todos ellos?. Si identifica servicios no necesarios, proceda adecuadamente. Una limpieza no le vendrá mal a su equipo, tanto desde el punto de vista de la seguridad, como del rendimiento.

@@ -281,10 +281,10 @@ Investigue si alguno de los servicios del sistema falla. Pruebe algunas de las o
 
 `systemd-timesyncd` es un servicio que facilita la sincronización del reloj del sistema con servidores NTP externos de manera automática y eficiente. Cuando este servicio está habilitado y en funcionamiento, se encarga de solicitar información de tiempo a servidores NTP remotos y ajustar el reloj local del sistema en consecuencia.
 
-## Apartado F
+## Apartado F - Pending...
 Identifique y cambie los principales parámetros de su segundo interface de red (ens34). Configure un segundo interface lógico. Al terminar, déjelo como estaba.
 1. Ver estado inicial de `ens34`  con `ifconfig ens34`:
-2. Configue la intrfacez de red `ens34` (_pendiente de probar_):
+2. Configue la intrfacez de red `ens34`:
 ```
 root@debian:/home/lsi# ifconfig ens34 down
 root@debian:/home/lsi# ifconfig ens34 mtu 1200

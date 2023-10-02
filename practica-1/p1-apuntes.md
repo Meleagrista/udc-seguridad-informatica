@@ -135,10 +135,11 @@ This package includes udev rules to start the daemon when a supported device is 
 
 La máquina no usa Bluetooth, pero tiene ciertas dependencies.
 
-## `anacron.service` && `cron.service` - disable
+## `anacron.service` && `cron.service` - enable
 Similar to the cron service, the anacron service runs applications or scripts at specific times and dates. This allows for reliable unattended system operation – scheduled events are not missed if the system goes down – instead, they are run as soon as possible after their scheduled time. Candidates for an anacron action are often system administration activies, such as log rotation, that must be performed, even if late.
 
 Unlike the cron service, anacron will not miss the execution of a scheduled job, even if the system is powered off. The activity will be performed when the system is next available. This makes anacron the preferred choice to initiate essential system administration tasks such as backup or disk space recovery.
+> Causa una pequeña subida del tiempo.
 
 ## `getty` - enabled
 Short for "get tty", is a Unix program running on a host computer that manages physical or virtual terminals (TTYs). When it detects a connection, it prompts for a username and runs the 'login' program to authenticate the user.

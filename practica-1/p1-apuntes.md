@@ -135,3 +135,8 @@ La máquina no usa Bluetooth, pero tiene ciertas dependencies.
 
 # Script
 Aun pendiente de revisar, pero [esta pagina](http://trajano.us.es/~fjfj/shell/shellscript.htm) tiene buena pinta para prender sobre porgramación shell.
+
+
+## `journalctl --vacuum-size=1G --vacuum-time=5d --vacuum-files=5` 
+
+Limita el jorunalctl : Hace que el tamaño máximo de los archivos sea 1GB (que eso no influye nunca porque suele ser menos), que el archivo más antiguo sea de hace 5 días y que haya como mucho 5 archivos de journal

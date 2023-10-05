@@ -1,15 +1,15 @@
+# Parte 1
 
-
-# C
+## C
 
  - Multiuser-target
 
 
-# G
+## G
 
 sudo ip route add 10.11.55.0/24 via 10.11.48.1
 
-# H
+## H
 
 
 Servicios desactivados: 
@@ -38,11 +38,11 @@ Cambiar el Grub
 
 - Grub timeout = 0 (No se si hace algo)
 
-# J
+## J
 
 `netstat -tuln`
 
-# K
+## K
 
 - `top`: El comando `top` muestra una lista de los procesos en ejecución en tu sistema, ordenados por uso de CPU por defecto. También muestra información sobre la memoria y otros recursos utilizados. Para ejecutar `top` en tiempo real, simplemente ejecuta `top` en una terminal.
 
@@ -56,7 +56,7 @@ Cambiar el Grub
 
 - `iftop`: `iftop` muestra una lista en tiempo real de las conexiones de red y el uso de ancho de banda por interfaz de red.
 
-# L
+## L
 
 Bloquear tcp wrappers
 
@@ -74,7 +74,7 @@ Conexciones
 	3. vpn -> Rango
 
 
-# M
+## M
 
 Rsyslog  :  
 
@@ -83,7 +83,7 @@ Mandar logs a los compañeros, separados sin mezlcar
 
 Pila de logs :  guardo logs mientras este apagada la maquina de mi compañero, cuando arranque le mando los logs que no tenga
 
-# N
+## N
 
 IPV6 activado y segurizado, o desactivado
 
@@ -95,6 +95,13 @@ Comprobacion
 	ssh -6 
 Ahora segurizamos
 
+___
+# Parte 2 
+___
+
+## E
+
+export PATH=$PATH:/opt/splunk/bin
 
 
 

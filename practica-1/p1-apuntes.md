@@ -82,7 +82,7 @@ For this particular case, the `accounts-daemon` is the executable component of t
 
 AppArmor is a great tool to secure and protect your Ubuntu and Debian systems. It could, however, be a little bit restrictive and cause unnecessary problems in some situations.
 
-## `avahi-daemon` - mask
+## `avahi-daemon` - `mask`
 Permite detectar automáticamente los recursos de una red local y conectarse a ella, para ello abre los puertos UDP 32768 y 5353, servicio de autodiscovery que no necesitamos en nuestra máquina. Se ocupa de:
 1. Asignar automáticamente una dirección IP incluso sin presencia de un servidor DHCP.
 2. Hacer la función de DNS (cada nodo es accesible como: nombre-nodo.local).

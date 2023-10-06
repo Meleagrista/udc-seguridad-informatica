@@ -51,16 +51,16 @@ Los que checkee pero no llegué a ninguna conclusión fueron:
 - `packagekit.service`: información sobre este en [esta pagina](https://medium.com/opsops/how-to-disable-packagekit-f935207044c1) pero mejor no tocarlo.
 - `dbus.service`: la informacón esta en [esta pagina](https://www.linuxquestions.org/questions/slackware-14/disabling-d-bus-4175621258/) pero parece que su activación es independiente aunque no tan relevante segun [esta pagina](https://forums.freebsd.org/threads/what-happen-if-i-dont-enable-dbus-service.76220/), para mas información para evitar el inicio de sus dependencias mirar [esta pagina](https://forum.siduction.org/index.php?topic=4259.0).
 
-## `pipewire`, `pipewire-pulse` & `pulseaudio` - disable --global
+## `pipewire`, `pipewire-pulse` & `pulseaudio` - `disable --global`
 Según tengo entendido no son necesarios y además me daban un par de problemas, la información que encontré esta en [esta pagina](https://askubuntu.com/questions/1407885/how-to-uninstall-pipewire-and-go-back-to-pulseaudio) y [esta otra](https://linuxmusicians.com/viewtopic.php?t=23206).
 
-## `dbus` - disable --global
+## `dbus` - `disable --global`
 Lo mencioné antes, traté de desabilitarlo pero se sigue activando.
 - `systemctl disable dbus.socket`
 - `systemctl disable dbus.service`
 - `systemctl disable --global dbus`
 
-## `ntp.service`, `ntpdate` & `ntpsec`
+## `ntp.service`, `ntpdate` & `ntpsec` - `disable`
 Su activación debería ser manual y así te ahorras el error de sintanxis en el journal.
 
 ## `rtkit.service`
@@ -77,7 +77,7 @@ accounts-daemon.service
 ```
 For this particular case, the `accounts-daemon` is the executable component of the `AccountsService`, which handles non-priveleged listing of account information (because apparently using `libc` routines for this like you should is too hard for GNOME developers to do). It may or may not be used by the display manager (login screen), the screensaver, and the account management tools in your desktop environment. As mentioned above, DBus starts requested services on-demand, so this is something that you can definitely disable automatic startup of, but it probably will be started by other components of your system (especially if you're using GNOME or KDE for your desktop).
 
-## `apparmor` - disable
+## `apparmor` - `disable`
 `AppArmor` is a Mandatory Access Control framework. When enabled, AppArmor confines programs according to a set of rules that specify what files a given program can access. This proactive approach helps protect the system against both known and unknown vulnerabilities.
 
 AppArmor is a great tool to secure and protect your Ubuntu and Debian systems. It could, however, be a little bit restrictive and cause unnecessary problems in some situations.
@@ -97,7 +97,7 @@ avahi-daemon.service
 ```
 Puede que otros servicios como `dbus` pueden intentar llamarlo, para solucionarlo puedes leer [esta pagina](https://www.linuxquestions.org/questions/linux-software-2/avahi-daemon-disabled-but-is-still-started-4175694808/) o ver la información sobre el servicio que lo llame.
 
-## `NetworkManager` - disable
+## `NetworkManager` - `disable`
 NetworkManager attempts to keep an active network connection available at all times.
 
 > No necesario porque usamos networking.service, este se encarga de gestionar automáticamente si no lo tenemos en networking.
@@ -109,7 +109,7 @@ The only time I have found `NetworkManager` useful was when I was using wireless
 
 > Avoid `NetworkManager` like the plague. It's another effort from the developers to Fisher-Price the UI for the lowest common denominator (in otherwords, the devs think you're too dumb to manage networking via a config file).
 
-## `cups` - disable
+## `cups` - `disable`
 The Debian printing system has undergone many significant changes over the past few years, with much of the printer management taking advantage of the advances in modern printer technology and the proliferation of IPP printers.
 > No se añade el `.service`, el comando es `systemctl disable cups && systemctl mask cups`.
 ```
@@ -121,10 +121,10 @@ cups.service
 ○   └─graphical.target
 ```
 
-## `cups-browsed` - disable
+## `cups-browsed` - `disable`
 A daemon for browsing the Bonjour broadcasts of shared, remote CUPS printers.
 
-## `ModemManager` - disable
+## `ModemManager` - `disable`
 ModemManager es un demonio activado por DBus que controla dispositivos y conexiones de banda ancha móvil (2G/3G/4G). Tanto si se trata de dispositivos integrados, llaves USB, teléfonos Bluetooth o dispositivos profesionales RS232/USB con fuentes de alimentación externas, ModemManager es capaz de preparar y configurar los módems y establecer conexiones con ellos.
 ```
 ModemManager.service
@@ -132,7 +132,7 @@ ModemManager.service
 ○   └─graphical.target
 ```
 
-## `bluetooth` - disable
+## `bluetooth` - `disable`
 La máquina no usa Bluetooth, pero tiene ciertas dependencies.
 
 ## `switcheroo-control`
@@ -141,19 +141,19 @@ For systems that have both an integrated GPU and a dedicated GPU, this package b
 
 > Parece que tras el borrado de GNOME ya no está presente este servicio.
 
-## `configure-printer@` - mask
+## `configure-printer@` - `mask`
 `system-config-printer` is an administration tool that functions in a similar way to the CUPS web interface for the configuration of printers and print queues, but it is a native application rather than a web page.
 
-## `display-manager` - mask
+## `display-manager` - `mask`
 A display manager is a graphical login manager which starts a session on a server from the same or another computer. A display manager presents the user with a login screen. A session starts when a user successfully enters a valid combination of username and password.
 
-## `nm-priv-helper` - mask
+## `nm-priv-helper` - `mask`
 File in a list of packages for `network-manager`: `/usr/lib/NetworkManager/nm-priv-helper`
 
-## `saned@.service` - mask
+## `saned@.service` - `mask`
 `saned` is the SANE (Scanner Access Now Easy) daemon that allows remote clients to access image acquisition devices available on the local host.
 
-## `usb_modeswitch` - mask
+## `usb_modeswitch` - `mask`
 Several new USB devices have their proprietary Windows drivers onboard, most of them WWAN and WLAN dongles. When plugged in for the first time, they act like a flash storage and start installing the Windows driver from there. If the driver is installed, it makes the storage device disappear and a new device, mainly composite (e.g. with modem ports), shows up.
 On Linux, in most cases the drivers are available as kernel modules, such as "usbserial" or "option". However, the device initially binds to "usb-storage" by default. usb_modeswitch can then send a provided bulk message (most likely a mass storage command) to the device; this message has to be determined by analyzing the actions of the Windows driver.
 
@@ -163,37 +163,29 @@ Usually, the program is distributed with a set of configurations for many known 
 
 Note that `usb_modeswitch` itself has no specific Linux dependencies.
 
-## `usbmuxd` - mask
+## `usbmuxd` - `mask`
 The USB multiplexor daemon, is in charge of coordinating access to iPhone and iPod Touch services over USB. Synchronization and management applications for the iPhone and iPod Touch need this daemon to communicate with such devices concurrently.
 
 This package includes udev rules to start the daemon when a supported device is plugged in, and stop it when all devices are removed.
 
 La máquina no usa Bluetooth, pero tiene ciertas dependencies.
 
-## `anacron.service` && `cron.service` - enable
+## `anacron.service` && `cron.service`
 Similar to the cron service, the anacron service runs applications or scripts at specific times and dates. This allows for reliable unattended system operation – scheduled events are not missed if the system goes down – instead, they are run as soon as possible after their scheduled time. Candidates for an anacron action are often system administration activies, such as log rotation, that must be performed, even if late.
 
 Unlike the cron service, anacron will not miss the execution of a scheduled job, even if the system is powered off. The activity will be performed when the system is next available. This makes anacron the preferred choice to initiate essential system administration tasks such as backup or disk space recovery.
 > Causa una pequeña subida del tiempo.
 
-## `getty` - enable
+## `getty`
 Short for "get tty", is a Unix program running on a host computer that manages physical or virtual terminals (TTYs). When it detects a connection, it prompts for a username and runs the 'login' program to authenticate the user.
 > `getty` is the process that manages logins on the console and on serial ports, if any. It's generally not safe to disable this, as console access is what we go to when other means of accessing a server fail.
 
-## Otros trucos para bajar el tiempo
-
-`journalctl --vacuum-size=1G --vacuum-time=5d --vacuum-files=5` 
-
-Limita el jorunalctl : Hace que el tamaño máximo de los archivos sea 1GB (que eso no influye nunca porque suele ser menos), que el archivo más antiguo sea de hace 5 días y que haya como mucho 5 archivos de journal
-
-
-# Script
+# Script - Pendiente de revisión
 Aun pendiente de revisar, pero [esta pagina](http://trajano.us.es/~fjfj/shell/shellscript.htm) tiene buena pinta para prender sobre porgramación shell.
 
-# Rsyslog
+# Rsyslog - Pendiente de revisión
 
 > Mandar logs a los compañeros, separados sin mezlcar
-
 
 El uso de Rsyslog en sistemas Unix o Linux implica configurar su funcionamiento para recopilar, filtrar y enviar registros según sus necesidades específicas. A continuación, te proporciono una guía básica para empezar a usar Rsyslog:
 

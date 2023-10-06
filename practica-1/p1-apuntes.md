@@ -23,9 +23,10 @@ Como estamos usando `multi-user.target`, ya no es tan necesario tener una interf
 En mi caso ya tenía problemas previos con un programa: `tracker` y sus hijos `tracker-extract` y `tracker-miner-fs`. Entonces, además de causar que mi tiempo de boot fuese de mas de un minuto como se ve en [este apartado](https://github.com/Meleagrista/legislacion-seguridad-informatica/blob/main/practica-1/p1-defensa.md#apartado-d). También causó problemas al intentar purgar los archivos relacionados con GNOME.
 - `sudo apt remove tracker tracker-extract tracker-miner-fs`
 
-Tras eliminarlo pude seguir desintalando GNOME y como efecto secundaio corrigio los errores que causaban la inflacción de tiempo de boot.
+Si siguen dando problemas mirar la información de [esta pagina](https://askubuntu.com/questions/876304/how-to-uninstall-all-trackers-tracker-miner-fs-apps).
 
-> A DE is 'just' a set of separated programs to do specific tasks. Building blocks as it were. The window manager could be considered the floor of a house and the extra tools like file manager, panel, and notifications are like the appliances in your home. You could live in a single empty room, if you wanted. (งツ)ว
+Tras eliminarlo pude seguir desintalando GNOME y como efecto secundaio corrigio los errores que causaban la inflacción de tiempo de boot.
+> A DE is 'just' a set of separated programs to do specific tasks. Building blocks as it were. The window manager could be considered the floor of a house and the extra tools like file manager, panel, and notifications are like the appliances in your home. You could live in a single empty room, if you wanted.
 
 > You just have to manually do things that you are used to being automatic, such as... mounting of USB drives you insert, changing sound inputs when you plug in your heaphones... It's not hard to just use a WM, but a DE is sort of a collection of extras that everyone was adding to their wm anyway.
 
@@ -35,7 +36,39 @@ Tras eliminarlo pude seguir desintalando GNOME y como efecto secundaio corrigio 
 | Adding a mask to a service creates a _symlink_ from `/etc/systemd/system` to `/dev/null`. | Disabling a service removes the _symlink_ from `/lib/systemd/system`. |
 | Masking a service makes it permanently unusable unless we unmask it. If we boot with a unit masked, it will not run even to satisfy dependencies. | A disabled service doesn’t automatically start at boot time. But, we can start it manually. Also, other services that need a disabled service can manually enable it. |
 
-## `accounts-daemon` - Pending...
+# Lista de servicios
+Los que checkee pero no llegué a ninguna conclusión fueron:
+- `vgauth.service`
+- `e2scrub_reap.service`: de este no encontré mucha información pero parece ser fundamental.
+- `dpkg-db-backup.service`: de este no encontré mucha información pero parece ser periodico y no debería afectar en el dia a dia.
+
+- `systemd-journal-flush.service`: de este encontré comandos y configuraciones en las respuestas de [este foro](https://askubuntu.com/questions/1094389/what-is-the-use-of-systemd-journal-flush-service) y [este otro](https://unix.stackexchange.com/questions/139513/how-to-clear-journalctl).
+
+- `gdm3.service`: informacón sobre este en [esta pagina](https://bbs.archlinux.org/viewtopic.php?id=271166).
+- `logrotate.service`: informacón sobre este en [esta pagina](https://manpages.debian.org/testing/logrotate/logrotate.8.en.html#:~:text=logrotate%20is%20designed%20to%20ease,as%20a%20daily%20cron%20job.).
+- `user@1000.service`: información sobre este en [esta pagina](https://manpages.debian.org/testing/systemd/user@.service.5.en.html).
+
+- `packagekit.service`: información sobre este en [esta pagina](https://medium.com/opsops/how-to-disable-packagekit-f935207044c1) pero mejor no tocarlo.
+- `dbus.service`: la informacón esta en [esta pagina](https://www.linuxquestions.org/questions/slackware-14/disabling-d-bus-4175621258/) pero parece que su activación es independiente aunque no tan relevante segun [esta pagina](https://forums.freebsd.org/threads/what-happen-if-i-dont-enable-dbus-service.76220/), para mas información para evitar el inicio de sus dependencias mirar [esta pagina](https://forum.siduction.org/index.php?topic=4259.0).
+
+## `pipewire`, `pipewire-pulse` & `pulseaudio` - disable --global
+Según tengo entendido no son necesarios y además me daban un par de problemas, la información que encontré esta en [esta pagina](https://askubuntu.com/questions/1407885/how-to-uninstall-pipewire-and-go-back-to-pulseaudio) y [esta otra](https://linuxmusicians.com/viewtopic.php?t=23206).
+
+## `dbus` - disable --global
+Lo mencioné antes, traté de desabilitarlo pero se sigue activando.
+- `systemctl disable dbus.socket`
+- `systemctl disable dbus.service`
+- `systemctl disable --global dbus`
+
+## `ntp.service`, `ntpdate` & `ntpsec`
+Su activación debería ser manual y así te ahorras el error de sintanxis en el journal.
+
+## `rtkit.service`
+Según tengo entendido no es necesario, la información que encontré esta en [esta pagina](https://packages.debian.org/sid/rtkit).
+El problema es que `dbus.service` lo trata de activar através de _socket_ entonces tienes que desactivarlo también o te saldrá una notificación de error al tratar de acceder a un servicio maskeado, si solo lo desactivas `dbus` lo activará independientemente.
+
+## `accounts-daemon`
+> Parece que tras el borrado de GNOME ya no está presente este servicio.
 The `AccountService` project provides a set of D-Bus interfaces for querying and manipulating user account information and an implementation of these interfaces, based on the `useradd`, `usermod` and `userdel` commands, `accounts-daemon.service` is a potential security risk. It is part of `AccountsService`, which allows programs to get and manipulate user account information. I can't think of a good reason to allow this kind of behind-my-back operations, so I mask it.
 As a general rule, if something is DBus based (and accounts-daemon is), it's safe to turn off automatic startup of it, as it will just get started by DBus whenever something actually needs it.
 ```
@@ -62,6 +95,8 @@ avahi-daemon.service
 ● └─multi-user.target
 ○   └─graphical.target
 ```
+Puede que otros servicios como `dbus` pueden intentar llamarlo, para solucionarlo puedes leer [esta pagina](https://www.linuxquestions.org/questions/linux-software-2/avahi-daemon-disabled-but-is-still-started-4175694808/) o ver la información sobre el servicio que lo llame.
+
 ## `NetworkManager` - disable
 NetworkManager attempts to keep an active network connection available at all times.
 
@@ -141,7 +176,7 @@ Similar to the cron service, the anacron service runs applications or scripts at
 Unlike the cron service, anacron will not miss the execution of a scheduled job, even if the system is powered off. The activity will be performed when the system is next available. This makes anacron the preferred choice to initiate essential system administration tasks such as backup or disk space recovery.
 > Causa una pequeña subida del tiempo.
 
-## `getty` - enabled
+## `getty` - enable
 Short for "get tty", is a Unix program running on a host computer that manages physical or virtual terminals (TTYs). When it detects a connection, it prompts for a username and runs the 'login' program to authenticate the user.
 > `getty` is the process that manages logins on the console and on serial ports, if any. It's generally not safe to disable this, as console access is what we go to when other means of accessing a server fail.
 

@@ -710,31 +710,31 @@ Instale el SIEM Splunk en su máquina. Sobre dicha plataforma haga los siguiente
 
 Como _Splunk_ está alojado dentro de una carpeta no accesible desde el _PATH_ lo mejor es usar la siguiente linea al comienzo de la sesion: `export PATH=$PATH/opt/splunk/bin`.
 
-1. Iniciar _Splunk_:
+1. *Iniciar _Splunk_:*
 
 Abre una terminal o línea de comandos en tu sistema operativo.
 Ejecuta el comando splunk start para iniciar Splunk. Dependiendo de cómo esté configurado en tu sistema, es posible que necesites privilegios de administrador o sudo para ejecutar este comando.
 
-2. Iniciar sesión en _Splunk Web_:
+2. *Iniciar sesión en _Splunk Web_:*
 
 Abre tu navegador web y accede a la interfaz web de Splunk.
 Por lo general, puedes hacerlo ingresando la dirección http://localhost:8000 en la barra de direcciones. Esto te llevará a la página de inicio de sesión de Splunk.
 
-3. Iniciar sesión en Splunk:
+3. *Iniciar sesión en Splunk:*
 
 Inicia sesión en Splunk con tus credenciales de usuario.
 
-4. Ir a la Búsqueda y Reportes:
+4. *Ir a la Búsqueda y Reportes:*
 
 Una vez que hayas iniciado sesión, serás redirigido al panel de control de Splunk.
 Haz clic en "Búsqueda y Reportes" en el menú de navegación superior. Esto te llevará a la interfaz de búsqueda de Splunk.
 
-5. Ejecutar la Consulta SPL:
+5. *Ejecutar la Consulta SPL:*
 
 En la interfaz de búsqueda, verás un cuadro de búsqueda de texto.
 Puedes ingresar tu consulta SPL directamente en este cuadro. Por ejemplo, como mencionamos anteriormente, puedes usar index="internal" sourcetype="splunkd" para buscar los logs internos de Splunk.
 
-6. Ver los Resultados:
+6. *Ver los Resultados:*
 
 Splunk mostrará los resultados de la consulta en la parte inferior de la página. Puedes explorar los registros y los datos resultantes de acuerdo con tus necesidades.
 

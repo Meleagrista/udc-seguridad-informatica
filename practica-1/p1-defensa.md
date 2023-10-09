@@ -1,4 +1,4 @@
-# PRÁCTICA 1 - CONFIGURACIÓN BÁSICA
+# PRÁCTICA 1 - CONFIGURACIÓN BÁSICA: PRIMERA PARTE
 ## Apartado A
 Configure su máquina virtual de laboratorio con los datos proporcionados por el profesor. Analice los ficheros básicos de configuración (interfaces, hosts, resolv.conf, nsswitch.conf, sources.list, etc.)
 1. Modificar el fichero `/etc/network/interfaces`:
@@ -415,7 +415,7 @@ root@debian:/home/lsi# tail -2 /var/log/syslog
 ```
 > `tail -2` devuelve las dos últimas líneas de un fichero.
 
-## Apatado N - Pending...
+## Apatado N
 Configure IPv6 6to4 y pruebe ping6 y ssh sobre dicho protocolo. ¿Qué hace su tcp-wrapper en las conexiones ssh en IPv6? Modifique su tcp-wapper siguiendo el criterio del apartado h). ¿Necesita IPv6?. ¿Cómo se deshabilita IPv6 en su equipo?
 
 1. Añadir a `/etc/network/interfaces` la configuración de la nueva interfaz:
@@ -423,25 +423,278 @@ Configure IPv6 6to4 y pruebe ping6 y ssh sobre dicho protocolo. ¿Qué hace su t
 auto 6to4
 iface 6to4 inet6 v4tunnel
 	pre-up modprobe ipv6
-	address 2002:a0b:3032::1
+	address 2002:a0b:3036::1
 	netmask 16
 	gateway ::10.11.48.1
 	endpoint any
-	local 10.11.48.50
+	local 10.11.48.54
 ```
 2. Activar la interfaz con `ifup 6to4`.
 3. Probamos a hacer un `ping6`.
 4. Añadimos a `/etc/hosts.allow`:
 ```
-sshd: [2002:a0b:3032::1]/48, [2002:a0b:316a::1]/48
+sshd: [2002:a0b:3136::1]/48, [2002:a0b:3137::1]/48
 ```
-> IP propia (ens33) + IP compañero (ens33).
-5. Probamos `ssh`:
+> Añadimos nuestra ip propia y la de nuestro compañero.
+5. Probamos a hacer un `ssh`.
 > No es necesario en nuestra red interna el uso de IPv6 gracias a nuestra interfaz 6to4.
-6. Se dehabilita añadiendo estas líneas en el fichero `/etc/sysctl.conf`:
+- Se dehabilita añadiendo estas líneas en el fichero `/etc/sysctl.conf`:
 ```
 net.ipv6.conf.all.disable_ipv6 = 1
 net.ipv6.conf.default.disable_ipv6 = 1
 net.ipv6.conf.lo.disable_ipv6 = 1
 ```
-7. Aplicar los cambios con `sysctl -p`.
+6. Aplicar los cambios con `sysctl -p`.
+
+# PRÁCTICA 1 - CONFIGURACIÓN BÁSICA: SEGUNDA PARTE
+## APARTADO A
+En colaboración con otro alumno de prácticas, configure un servidor y un cliente NTP.
+> Para la demostración usamos 10.11.49.54 como servidor y 10.11.49.55 como cliente.
+### Maquina del servidor
+1. Configurar el fichero `/etc/ntpsec/ntp.conf` con las siguiente lineas:
+```
+# pool.ntp.org maps to about 1000 low-stratum NTP servers.  Your server will
+# pick a different set every time it starts up.  Please consider joining the
+# pool: <http://www.pool.ntp.org/join.html>
+#pool 0.debian.pool.ntp.org iburst
+#pool 1.debian.pool.ntp.org iburst
+#pool 2.debian.pool.ntp.org iburst
+#pool 3.debian.pool.ntp.org iburst
+
+# Comentar el primero para modo cliente o comenta el segundo (tercera linea) para modo servidor.
+server 127.127.1.0
+fudge 127.127.1.0 stratum 10
+#server 10.11.49.54
+
+# Nuestros restricts, no estoy seguro si funcionan correctamente, usadlos a vuestra discreción.
+#restrict 10.11.49.54 mask 255.255.255.255 notrap modify
+#restrict ::1
+#restrict 127.0.0.1
+
+# By default, exchange time with everybody, but don't allow configuration.
+restrict default kod nomodify nopeer noquery limited
+
+# Local users may interrogate the ntp server more closely.
+restrict 127.0.0.1
+restrict ::1
+```
+> La configuración de otros años fue la siguiente, pero el resto de la configuración está obsoleta.
+```
+# Configuración servidor
+server 127.127.1.0 minpoll 4
+fudge 127.127.1.0 stratum 0
+```
+### Maquina del cliente
+1. Configurar el fichero `/etc/ntpsec/ntp.conf` con las siguiente lineas:
+```
+# pool.ntp.org maps to about 1000 low-stratum NTP servers.  Your server will
+# pick a different set every time it starts up.  Please consider joining the
+# pool: <http://www.pool.ntp.org/join.html>
+#pool 0.debian.pool.ntp.org iburst
+#pool 1.debian.pool.ntp.org iburst
+#pool 2.debian.pool.ntp.org iburst
+#pool 3.debian.pool.ntp.org iburst
+
+# Comentar el primero para modo cliente o comenta el segundo (tercera linea) para modo servidor.
+#server 127.127.1.0
+fudge 127.127.1.0 stratum 10
+server 10.11.49.54
+
+# Nuestros restricts, no estoy seguro si funcionan correctamente, usadlos a vuestra discreción.
+#restrict 10.11.49.54 mask 255.255.255.255 notrap modify
+#restrict ::1
+#restrict 127.0.0.1
+
+# By default, exchange time with everybody, but don't allow configuration.
+restrict default kod nomodify nopeer noquery limited
+
+# Local users may interrogate the ntp server more closely.
+restrict 127.0.0.1
+restrict ::1
+```
+> La configuración de otros años fue la siguiente, pero el resto de la configuración está obsoleta.
+```
+### Configuración cliente
+server 10.11.49.106 minpoll 4
+fudge 127.127.1.0 stratum 1
+```
+
+2. Para actualizar cambios en `ntp.conf` usar `systemctl restart ntp`.
+3. Para comprobar si ambas maquinas están funcionando correctamente podemos usar `ntpq -p`.
+El comando nos indicará el estado de tanto cliente como servidor:
+- Para confirmar su correcto funcionamiento debemos comprobar que el mensaje la columna `redif` es `LOCAL(0)` en vez de `.INIT.`.
+- Después para comprobar si las maquinas pueden conectarse de forma segura debemos comprobar que la columna `reach` es 377.
+```
+lyra@ws07475:~$ ntpq -p
+     remote           refid      st t when poll reach   delay   offset  jitter
+==============================================================================
+ europium.canoni .INIT.          16 u    - 1024    0    0.000    0.000   0.000
+```
+> Sometimes internet routers have problems passing through NTP traffic. The reason is that UDP is a bit more trickier to forward than
+TCP and sometimes the port is even used on the device itself for an NTP daemon.
+
+Toda la información sobre le output del comando se encuentra en [esta pagina](https://paulroberts69.wordpress.com/2022/08/02/interpreting-ntpq-output/).
+5. Para realizar la comprobación podemos hacer lo siguiente:
+```
+root@debian:~# date +%T -s 1
+01:00:00
+root@debian:~# ntpdate 10.11.49.106
+28 Sep 23:43:46 ntpdate[1017]: step time server 10.11.49.106 offset +81815.937779 sec
+```
+> Cambiar la hora en la maquina cliente y luego pedir una actualización al servidor.
+
+Para la comprobación es necesario instalar con `apt install` el paquete `nptdate`.
+
+## Apartado B
+Cruzando los dos equipos anteriores, configure con rsyslog un servidor y un cliente de logs.
+> Para la demostración usamos 10.11.49.54 como servidor y 10.11.49.55 como cliente.
+### Maquina del servidor
+1. Configurar el fichero `/etc/rsyslog.conf` con las siguiente lineas:
+```
+#################
+#### MODULES ####
+#################
+
+module(load="imuxsock") # provides support for local system logging
+module(load="imklog")   # provides kernel logging support
+#module(load="immark")  # provides --MARK-- message capability
+
+# provides UDP syslog reception
+#module(load="imudp")
+#input(type="imudp" port="514")
+
+# provides TCP syslog reception
+module(load="imtcp")
+input(type="imtcp" port="514")
+
+###########################
+#### GLOBAL DIRECTIVES ####
+###########################
+
+
+# Con esto servidor sólo aceptará mensajes del compañero
+$AllowedSender TCP 127.0.0.1, 10.11.49.106
+
+# Template para guardar los registros de log
+$template remote, "/var/log/%fromhost-ip%/%programname%.log"
+*.* ?remote
+& stop
+```
+> Descomentar los modulos que se quieran utilizar para la conexión.
+### Maquina del cliente
+1. Configurar el fichero `/etc/rsyslog.conf` con las siguiente lineas:
+```
+*.* action(
+       type="omfwd" 
+       target="10.11.49.54" 
+       port="514" 
+       protocol="tcp" 
+       action.resumeRetryCount="-1"
+       queue.type="linkedlist"
+       queue.filename="rsyslog-queue"
+       queue.saveOnShutdown="on"
+)
+```
+2. Para actualizar cambios en `rsyslog.conf` utilizar `systemctl restart rsyslog.service`.
+- Para probar si funciona podemos hacer lo siguiente:
+1. Ejecutar `root@debian:/home/lsi# logger "Hello world"` en el cliente.
+2. Ejecutar `root@debian:~# cat /var/log/10.11.49.55/lsi.log` en el servidor.
+3. En el servidor, abrir el archivo `/etc/rsyslog.conf y comentar la siguiente línea en el servidor:
+```
+# Provides TCP syslog reception
+module(load="imtcp")
+#input(type="imtcp" port="514")
+```
+> Esto para que deje de escucharse en el puerto 514/TCP.
+
+4. Tras esto, ejecutar `systemctl restart rsyslog` en el servidor.
+5. Mandar un log al servidor desde el cliente.
+6. Comprobar que no se ha guardado el mensaje generado con `tail /var/log/10.11.49.55/lsi.log` en el servidor.
+7. Descomentar la línea comentada en el paso `3` y volver a hacer el paso `4`.
+8. Tras unos segundos, volver a hacer `tail /var/log/10.11.49.55/lsi.log` en el servidor.
+
+## APARTADO C
+Haga todo tipo de propuestas sobre los siguientes aspectos: ¿Qué problemas de seguridad identifica en los dos apartados anteriores? ¿Cómo podría solucionar los problemas identificados?
+
+### En `rsyslog`
+1. Si no se configura bien puede suceder cuando los logs ajenos se guardan en el mismo lugar que los propios con todos los problemas que eso conlleva.
+[2](https://www.incibe.es/incibe-cert/alerta-temprana/vulnerabilidades/cve-2018-16881). Cualquiera podría enviar logs al servidor y llenar el disco, lo que supone que podrían hacer al servidor un ataque [D]DOS.
+[3](https://www.rsyslog.com/doc/v8-stable/tutorials/tls_cert_summary.html). Además, los logs van sin cifrar por la red; cualquiera podría ver o modificar sus contenidos con un ataque MitM (_Man in the Middle_).
+
+- *Network vulnerabilities:* Rsyslog has a feature that allows remote logging over the network, which can be useful for centralized log management. However, if this feature is not properly configured, it can open the system to network attacks such as man-in-the-middle attacks or malicious log message injection.
+- *Privilege Elevation:* Rsyslog can be configured to run as a privileged user, which can pose a security risk if the software contains vulnerabilities that can be exploited to gain elevated privileges.
+- *Injection Attacks:* Rsyslog can be configured to run arbitrary scripts based on specific log messages using RainerScript language.
+
+### En `ntp`
+Una busqueda resulta en bastantes vulnerabilidades encontradas, para mas información ver [esta pagina](https://www.cvedetails.com/vulnerability-list/vendor_id-2153/NTP.html).
+> Typically, time synchronization is achieved by implementing Network Time Protocol (NTP), which runs on UDP port 123.
+
+> NTP is one of the internet’s oldest protocols and is not secure by default, leaving it susceptible to distributed denial-of-service (DDoS) and man-in-the-middle (MitM) attacks.
+
+_NTP Amplification_ is a type of reflective DDoS attack in which an attacker targets publicly-accessible NTP servers and repeatedly sends requests to the server using a spoofed IP address in order to send the targeted system a large response from the NTP server.
+For example, an NTP Amplification attack could prevent internet users from reaching an organization's websites and web resources.
+
+Additionally, NTP is vulnerable to MitM attacks. These attacks allow unauthorized users to intercept, read, and modify traffic sent between clients and servers. NTP is particularly susceptible to MitM attacks due to the reliance on a small set of servers and the algorithm used to choose a server with which to sync.
+
+### For `rsyslog`:
+1. **Network Vulnerabilities**:
+   - **Solution**: Ensure that remote logging is configured securely to prevent unauthorized access and message injection. Follow these steps:
+     - Configure firewall rules to limit access to the `rsyslog` port (usually UDP/514 or TCP/514) to trusted sources only.
+     - Implement TLS (Transport Layer Security) encryption for remote logging to protect log messages from interception.
+     - Use authentication mechanisms such as username/password or client certificates for remote log sources.
+     - Regularly review and rotate TLS certificates and keys.
+
+2. **Privilege Elevation**:
+   - **Solution**: Run `rsyslog` with the least privilege necessary. Follow these steps:
+     - Create a dedicated user and group for `rsyslog` to run as.
+     - Configure the `rsyslog` service to run with these limited privileges.
+     - Avoid running `rsyslog` as the root user, as this minimizes the potential impact of vulnerabilities.
+
+3. **Injection Attacks**:
+   - **Solution**: Be cautious when configuring RainerScript rules that execute arbitrary scripts. Follow these steps:
+     - Only allow trusted users to configure custom RainerScript rules.
+     - Sanitize and validate input to prevent any malicious script injection.
+     - Regularly review and audit RainerScript configurations for security issues.
+
+### For `ntp`:
+1. **NTP Amplification**:
+   - **Solution**: Mitigate NTP Amplification attacks by implementing the following measures:
+     - Update your NTP software to the latest version to address known vulnerabilities.
+     - Configure NTP servers to restrict access from unauthorized or spoofed IP addresses.
+     - Implement rate limiting on NTP responses to prevent amplification attacks.
+     - Monitor NTP traffic and set up alerts for unusual activity or traffic spikes that may indicate an ongoing attack.
+
+2. **MitM Attacks**:
+   - **Solution**: Protect against Man-in-the-Middle (MitM) attacks by following these guidelines:
+     - Implement NTP authentication mechanisms to ensure that NTP clients can trust the server they are synchronizing with.
+     - Use a diverse set of NTP servers from trusted sources to reduce the risk of relying on a single compromised server.
+     - Encrypt NTP traffic using NTS (Network Time Security) or other secure methods to prevent eavesdropping and tampering.
+
+3. **General NTP Security**:
+   - **Solution**: Enhance the overall security of your NTP infrastructure:
+     - Periodically review and patch your NTP software to address newly discovered vulnerabilities.
+     - Restrict access to NTP servers and services to trusted networks and clients.
+     - Implement network segmentation to isolate NTP servers from critical infrastructure.
+     - Monitor NTP traffic and logs for suspicious activity.
+
+# APARTADO D
+En la plataforma de virtualización corren, entre otrs equipos, más de 200 máquinas virtuales para LSI. Como los recursos son limitados, y el disco duro también, identifique todas aquellas acciones que pueda hacer para reducir el espacio de disco ocupado.
+
+- `df -H`: Muestra información sobre el almacenamiento de los sistemas de ficheros montados en la máquina.
+- `apt autoclean`: Elimina de la caché los paquetes de versiones antiguas e innecesarias.
+- `apt clean`: Elimina todos los paquetes de la caché.
+- `apt autoremove`: Elimina aquellos paquetes generalmente instalados como dependencias de otras instalaciones, que ya no son necesarios.
+- `apt --purge autoremove`: La opción `--purge` permite otras llamadas de `apt` para borrar también archivos de configuración y demás.
+- `apt remove --purge man-db`: Borrar `man`.
+
+También se puede borrar imágenes kernel antiguas:
+1. `uname -r`: Muestra kernel actual.
+2. `dpkg --list | grep linux-image`: Muestra los kernels que tenemos en el sistema.
+```console
+	root@debian:/home/lsi# dpkg --list | grep linux-image
+	ii  linux-image-5.10.0-18-amd64           5.10.140-1                       amd64        Linux 5.10 for 64-bit PCs (signed)
+	ii  linux-image-amd64                     5.10.140-1                       amd64        Linux for 64-bit PCs (meta-package)
+```
+3. `apt-get --purge remove linux-image-4...`: Elimina un kernel en específico.
+   
+Lo ideal es dejar solo las imagenes mas actuales.

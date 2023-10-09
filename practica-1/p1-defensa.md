@@ -700,3 +700,92 @@ También se puede borrar imágenes kernel antiguas:
 Lo ideal es dejar solo las imagenes mas actuales.
 
 ## APARTADO E
+Instale el SIEM Splunk en su máquina. Sobre dicha plataforma haga los siguientes puntos:
+1. Genere una query que visualice los logs internos del splunk.
+2. Cargue el fichero `/var/log/apache2/access.log` y el `journal` del sistema y visualicelos.
+3. Obtenga las IPs de los equipos que se han conectado a su servidor web (pruebe a generar algún tipo de grafico de visualización), así como las IPs que se han conectado un determinado día de un determinado mes.
+4. Trate de obtener el país y región origen de las IPs que se han conectado a su servidor web y y si es posible sus coordenadas geográficas.
+5. Obtenga los host origen, sources y sourcestypes.
+6. ¿Como podría hacer que splunk haga de servidor de log de su cliente?
+
+Como _Splunk_ está alojado dentro de una carpeta no accesible desde el _PATH_ lo mejor es usar la siguiente linea al comienzo de la sesion: `export PATH=$PATH/opt/splunk/bin`.
+
+1. Iniciar _Splunk_:
+
+Abre una terminal o línea de comandos en tu sistema operativo.
+Ejecuta el comando splunk start para iniciar Splunk. Dependiendo de cómo esté configurado en tu sistema, es posible que necesites privilegios de administrador o sudo para ejecutar este comando.
+
+2. Iniciar sesión en _Splunk Web_:
+
+Abre tu navegador web y accede a la interfaz web de Splunk.
+Por lo general, puedes hacerlo ingresando la dirección http://localhost:8000 en la barra de direcciones. Esto te llevará a la página de inicio de sesión de Splunk.
+
+3. Iniciar sesión en Splunk:
+
+Inicia sesión en Splunk con tus credenciales de usuario.
+
+4. Ir a la Búsqueda y Reportes:
+
+Una vez que hayas iniciado sesión, serás redirigido al panel de control de Splunk.
+Haz clic en "Búsqueda y Reportes" en el menú de navegación superior. Esto te llevará a la interfaz de búsqueda de Splunk.
+
+5. Ejecutar la Consulta SPL:
+
+En la interfaz de búsqueda, verás un cuadro de búsqueda de texto.
+Puedes ingresar tu consulta SPL directamente en este cuadro. Por ejemplo, como mencionamos anteriormente, puedes usar index="internal" sourcetype="splunkd" para buscar los logs internos de Splunk.
+
+6. Ver los Resultados:
+
+Splunk mostrará los resultados de la consulta en la parte inferior de la página. Puedes explorar los registros y los datos resultantes de acuerdo con tus necesidades.
+
+- Como debido al cambio de temario este apartado vino antes que la instalación de _Apache_ hemos generado y documento de logs falso con IPs de diferentes lugares:
+```
+2023-10-01T10:00:55.571035+02:00 debian sshd[1001]: Failed password for user admin from 203.0.113.1 port 12345 ssh2
+2023-10-01T10:02:46.973354+02:00 debian sshd[1002]: Failed password for user root from 192.168.1.100 port 54321 ssh2
+2023-10-01T10:05:12.865123+02:00 debian sshd[1003]: Accepted publickey for user user1 from 103.45.67.89 port 23456 ssh2
+2023-10-01T10:10:05.791202+02:00 debian sshd[1004]: Failed password for invalid user testuser from 45.67.89.101 port 9876 ssh2
+2023-10-02T14:15:33.124578+02:00 debian sshd[1005]: Accepted password for user admin from 185.23.45.67 port 34567 ssh2
+2023-10-02T14:20:21.512345+02:00 debian sshd[1006]: Failed password for user user2 from 112.130.140.150 port 2222 ssh2
+2023-10-03T18:30:15.981234+02:00 debian sshd[1007]: Accepted publickey for user admin from 203.45.56.78 port 1111 ssh2
+2023-10-03T18:35:29.785643+02:00 debian sshd[1008]: Failed password for user root from 210.123.45.67 port 7777 ssh2
+2023-10-03T18:40:10.445566+02:00 debian sshd[1009]: Failed password for invalid user guest from 123.45.67.89 port 8888 ssh2
+2023-10-04T22:55:44.990011+02:00 debian sshd[1010]: Accepted password for user admin from 67.89.90.101 port 2222 ssh2
+2023-10-04T22:58:57.654321+02:00 debian sshd[1011]: Failed password for user user3 from 34.56.78.90 port 3333 ssh2
+2023-10-04T23:05:08.112233+02:00 debian sshd[1012]: Failed password for user testuser from 78.90.101.112 port 4444 ssh2
+2023-10-05T03:20:17.776655+02:00 debian sshd[1013]: Accepted publickey for user admin from 101.112.113.114 port 5555 ssh2
+2023-10-05T03:22:45.334455+02:00 debian sshd[1014]: Failed password for user root from 115.116.117.118 port 6666 ssh2
+2023-10-05T03:30:12.998877+02:00 debian sshd[1015]: Failed password for invalid user guest from 119.120.121.122 port 7777 ssh2
+2023-10-06T08:45:30.445566+02:00 debian sshd[1016]: Accepted password for user admin from 123.124.125.126 port 8888 ssh2
+2023-10-06T08:48:22.998877+02:00 debian sshd[1017]: Failed password for user user4 from 127.128.129.130 port 9999 ssh2
+2023-10-06T08:55:10.667788+02:00 debian sshd[1018]: Failed password for user testuser from 131.132.133.134 port 1111 ssh2
+2023-10-07T12:10:59.223344+02:00 debian sshd[1019]: Accepted publickey for user admin from 135.136.137.138 port 1234 ssh2
+2023-10-07T12:15:42.556677+02:00 debian sshd[1020]: Failed password for user root from 139.140.141.142 port 2345 ssh2
+2023-10-07T12:20:18.112233+02:00 debian sshd[1021]: Failed password for invalid user guest from 143.144.145.146 port 3456 ssh2
+2023-10-08T16:30:11.776655+02:00 debian sshd[1022]: Accepted password for user admin from 147.148.149.150 port 4567 ssh2
+2023-10-08T16:35:59.998877+02:00 debian sshd[1023]: Failed password for user user5 from 151.152.153.154 port 5678 ssh2
+2023-10-08T16:40:29.667788+02:00 debian sshd[1024]: Failed password for user testuser from 155.156.157.158 port 6789 ssh2
+2023-10-09T20:55:45.334455+02:00 debian sshd[1025]: Accepted publickey for user admin from 159.160.161.162 port 7890 ssh2
+2023-10-09T20:58:22.556677+02:00 debian sshd[1026]: Failed password for user root from 163.164.165.166 port 8901 ssh2
+2023-10-09T21:05:10.112233+02:00 debian sshd[1027]: Failed password for invalid user guest from 167.168.169.170 port 9012 ssh2
+2023-10-10T01:15:30.445566+02:00 debian sshd[1028]: Accepted password for user admin from 171.172.173.174 port 1234 ssh2
+2023-10-10T01:18:45.998877+02:00 debian sshd[1029]: Failed password for user user6 from 175.176.177.178 port 2345 ssh2
+2023-10-10T01:20:59.667788+02:00 debian sshd[1030]: Failed password for user testuser from 179.180.181.182 port 3456 ssh2
+2023-10-11T05:30:20.556677+02:00 debian sshd[1031]: Accepted publickey for user admin from 183.184.185.186 port 4567 ssh2
+2023-10-11T05:35:41.112233+02:00 debian sshd[1032]: Failed password for user root from 187.188.189.190 port 5678 ssh2
+2023-10-11T05:40:59.998877+02:00 debian sshd[1033]: Failed password for invalid user guest from 191.192.193.194 port 6789 ssh2
+2023-10-12T09:50:30.445566+02:00 debian sshd[1034]: Accepted password for user admin from 195.196.197.198 port 7890 ssh2
+2023-10-12T09:52:45.998877+02:00 debian sshd[1035]: Failed password for user user7 from 199.200.201.202 port 8901 ssh2
+2023-10-12T09:55:10.667788+02:00 debian sshd[1036]: Failed password for user testuser from 203.204.205.206 port 9012 ssh2
+2023-10-13T14:05:22.556677+02:00 debian sshd[1037]: Accepted publickey for user admin from 207.208.209.210 port 1234 ssh2
+2023-10-13T14:10:37.112233+02:00 debian sshd[1038]: Failed password for user root from 211.212.213.214 port 2345 ssh2
+2023-10-13T14:15:49.998877+02:00 debian sshd[1039]: Failed password for invalid user guest from 215.216.217.218 port 3456 ssh2
+2023-10-14T18:20:55.334455+02:00 debian sshd[1040]: Accepted password for user admin from 219.220.221.222 port 4567 ssh2
+2023-10-14T18:25:41.556677+02:00 debian sshd[1041]: Failed password for user user8 from 223.224.225.226 port 5678 ssh2
+2023-10-14T18:30:59.998877+02:00 debian sshd[1042]: Failed password for user testuser from 227.228.229.230 port 6789 ssh2
+2023-10-15T22:35:10.667788+02:00 debian sshd[1043]: Accepted publickey for user admin from 231.232.233.234 port 7890 ssh2
+2023-10-15T22:40:45.334455+02:00 debian sshd[1044]: Failed password for user root from 235.236.237.238 port 8901 ssh2
+2023-10-15T22:45:59.998877+02:00 debian sshd[1045]: Failed password for invalid user guest from 239.240.241.242 port 9012 ssh2
+2023-10-16T02:50:30.445566+02:00 debian sshd[1046]: Accepted password for user admin from 243.244.245.246 port 1234 ssh2
+2023-10-16T02:52:45.998877+02:00 debian sshd[1047]: Failed password for user user9 from 247.248.249.250 port 2345 ssh2
+2023-10-16T02:55:10.667788+02:00 debian sshd[1048]: Failed password for user testuser from 251.252.253.254 port 3456 ssh2
+```

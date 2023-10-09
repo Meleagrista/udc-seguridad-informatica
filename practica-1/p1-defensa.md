@@ -698,3 +698,5 @@ También se puede borrar imágenes kernel antiguas:
 3. `apt-get --purge remove linux-image-4...`: Elimina un kernel en específico.
    
 Lo ideal es dejar solo las imagenes mas actuales.
+
+## APARTADO E

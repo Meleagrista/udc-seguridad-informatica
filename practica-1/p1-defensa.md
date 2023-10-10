@@ -734,6 +734,9 @@ Haz clic en "Búsqueda y Reportes" en el menú de navegación superior. Esto te 
 En la interfaz de búsqueda, verás un cuadro de búsqueda de texto.
 Puedes ingresar tu consulta SPL directamente en este cuadro. Por ejemplo, como mencionamos anteriormente, puedes usar index="internal" sourcetype="splunkd" para buscar los logs internos de Splunk.
 
+
+Localizaciones IP : source="/var/log/fake.log" host="debian" sourcetype="fake-auth" from="from" | dedup ip | table ip | iplocation ip
+
 6. *Ver los Resultados:*
 
 Splunk mostrará los resultados de la consulta en la parte inferior de la página. Puedes explorar los registros y los datos resultantes de acuerdo con tus necesidades.

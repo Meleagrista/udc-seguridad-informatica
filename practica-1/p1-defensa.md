@@ -700,6 +700,7 @@ También se puede borrar imágenes kernel antiguas:
 Lo ideal es dejar solo las imagenes mas actuales.
 
 ## APARTADO E
+### *Este apartado no está completo*
 Instale el SIEM Splunk en su máquina. Sobre dicha plataforma haga los siguientes puntos:
 1. Genere una query que visualice los logs internos del splunk.
 2. Cargue el fichero `/var/log/apache2/access.log` y el `journal` del sistema y visualicelos.

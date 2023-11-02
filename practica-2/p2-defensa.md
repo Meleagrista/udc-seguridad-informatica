@@ -33,7 +33,8 @@ Obtenga la relación de las direcciones MAC de los equipos de su segmento.
 > `nmap -sP 10.11.48.0/23`
 
 ## APARTADO D
-### *Apartado incompleto.*
+> *Apartado incompleto.*
+
 Obtenga la relación de las direcciones IPv6 de su segmento.
 > `ping6 -c2 -I ens33 ff02::1`
 

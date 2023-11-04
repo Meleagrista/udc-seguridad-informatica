@@ -119,6 +119,8 @@ Ataque un servidor apache instalado en algunas de las máquinas del laboratorio 
 > `apt install apache2`
 
 > `curl https://www.alvarofreire.es/ > /var/www/html/index.html`
+
+> `slowhttptest -c 1000 -H -g -o slowhttp -i 10 -r 200 -t GET -u http://10.11.49.54 -x 24 -p 3`
 1. ¿Cómo podría proteger dicho servicio ante este tipo de ataque?
 > Con un firewall de aplicaciones web como modsecurity.
 2. ¿Y si se produjese desde fuera de su segmento de red?
@@ -135,8 +137,9 @@ Instale y configure modsecurity. Vuelva a proceder con el ataque del apartado an
 
 > `cp /etc/modsecurity/modsecurity.conf-recommended app`
 
+> `cat app`
+
 > `nano /etc/modsecurity/modsecurity.conf`
-- Change `SecRuleEngine` from `DetectionOnly` to `On`
 ```
 # Enable ModSecurity, attaching it to every transaction. Use detection
 # only to start with, because that minimises the chances of post-installation
@@ -144,6 +147,7 @@ Instale y configure modsecurity. Vuelva a proceder con el ataque del apartado an
 #
 SecRuleEngine On
 ```
+- Change `SecRuleEngine` from `DetectionOnly` to `On`
 > `apt install libapache2-mod-evasive`
 
 > `a2enmod evasive`
@@ -167,4 +171,37 @@ SecRuleEngine On
 ```
 
 ## APARTADO P
-> *Apartado incompleto.*
+1. Obtenga de forma pasiva el direccionamiento público IPv4 e IPv6 asignado a la Universidade da Coruña.
+> `whois -h whois.ripe.net UDC`
+- Desde la maquina virtual no funcionan esta serie de comandos, hay que hacerlos desde nuestra maquina local.
+
+2. Obtenga información sobre el direccionamiento de los servidores DNS y MX de la Universidade da Coruña.
+> `apt install bind-utils`
+
+> `dig udc.es MX`
+- Desde la maquina virtual no funcionan esta serie de comandos, hay que hacerlos desde nuestra maquina local.
+
+3. ¿Puede hacer una transferencia de zona sobre los servidores DNS de la UDC?
+- No, tiene la transferencia de zona deshabilitada:
+> `dig axfr @zipi.udc.es udc.es.`
+- Desde la maquina virtual no funcionan esta serie de comandos, hay que hacerlos desde nuestra maquina local.
+
+4. En caso negativo, obtenga todos los nombres.dominio posibles de la UDC.
+> `nmap --script hostmap-crtsh.nse udc.es`
+
+5. ¿Qué gestor de contenidos se utiliza en www.usc.es?
+> `apt-get install whatweb`
+
+> `whatweb www.usc.es`
+
+## APARTADO Q
+> *Apartado repetido*
+Trate de sacar un perfil de los principales sistemas que conviven en su red de prácticas, puertos accesibles, fingerprinting, etc.
+
+## APARTADO R
+Realice algún ataque de “password guessing” contra su servidor ssh y compruebe que el analizador de logs reporta las correspondientes alarmas.
+- El archivo exacto se puede encontrar [aquí](https://github.com/danielmiessler/SecLists/blob/master/Passwords/Common-Credentials/10k-most-common.txt).
+> `scp .\10k-most-common.txt lsi@10.11.49.54:/home/lsi`
+
+Después de añadir la contraseña correcta continuamos...
+> `medusa -h 10.11.49.106 -u lsi -P 10k-most-common.txt -M ssh`

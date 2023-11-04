@@ -228,6 +228,7 @@ Reportar alarmas está muy bien, pero no estaría mejor un sistema activo, en lu
 
 > `apt-get install ossec-hids-agent`
 
+- Para más información sobre la instalación se puede consultar la [siguiente página](https://www.ossec.net/docs/docs/manual/installation/installation-requirements.html) para ver los requisitos de instalación y la [siguiente página](https://www.ossec.net/download-ossec/) para ver los métodos de instalación.
 > `/var/ossec/bin/manage_agents`
 
 > `/var/ossec/bin/ossec-control start`
@@ -242,3 +243,9 @@ Los registros (logs) se pueden ver de la siguiente manera:
 > `tail /var/ossec/logs/ossec.log`
 
 > `tail /var/ossec/logs/active-responses.log`
+
+## APARTADO T
+Supongamos que una máquina ha sido comprometida y disponemos de un fichero con sus mensajes de log. Procese dicho fichero con OSSEC para tratar de localizar evidencias de lo acontecido (“post mortem”). Muestre las alertas detectadas con su grado de criticidad, así como un resumen de las mismas.
+> `cat /var/log/auth.log | /var/ossec/bin/ossec-logtest -a`
+
+> `cat /var/log/auth.log | /var/ossec/bin/ossec-logtest -a |/var/ossec/bin/ossec-reportd`

@@ -99,7 +99,11 @@ Pruebe distintas técnicas de host discovery, port scanning y OS fingerprinting 
 
 ## APARTADO K
 Obtenga información "en tiempo real" sobre las conexiones de su máquina, así como del ancho de banda consumido en cada una de ellas.
+> `apt-get install iftop`
+
 > `iftop -i ens33`
+
+> `apt-get install vnstat`
 
 > `vnstat -l -i ens33`
 

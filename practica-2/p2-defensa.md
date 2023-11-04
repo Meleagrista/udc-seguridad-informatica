@@ -200,8 +200,45 @@ Trate de sacar un perfil de los principales sistemas que conviven en su red de p
 
 ## APARTADO R
 Realice algún ataque de “password guessing” contra su servidor ssh y compruebe que el analizador de logs reporta las correspondientes alarmas.
+> `apt-get install medusa`
+
 - El archivo exacto se puede encontrar [aquí](https://github.com/danielmiessler/SecLists/blob/master/Passwords/Common-Credentials/10k-most-common.txt).
 > `scp .\10k-most-common.txt lsi@10.11.49.54:/home/lsi`
 
 Después de añadir la contraseña correcta continuamos...
-> `medusa -h 10.11.49.106 -u lsi -P 10k-most-common.txt -M ssh`
+> `medusa -h 10.11.49.54 -u lsi -P 10k-most-common.txt -M ssh`
+
+## APARTADO S
+Reportar alarmas está muy bien, pero no estaría mejor un sistema activo, en lugar de uno pasivo. Configure algún sistema activo, por ejemplo OSSEC, y pruebe su funcionamiento ante un “password guessing”.
+> `apt -y install  wget git vim unzip make gcc build-essential php php-cli php-common libapache2-mod-php apache2-utils inotify-tools libpcre2-dev zlib1g-dev  libz-dev libssl-dev libevent-dev build-essential libsystemd-dev`
+
+> `wget https://github.com/ossec/ossec-hids/archive/refs/tags/3.7.0.zip`
+
+> `mv 3.7.0.zip  ossec-hids-3.7.0.zip`
+
+> `unzip ossec-hids-3.7.0.zip`
+
+> `cd ossec-hids-3.7.0`
+
+> `./install.sh`
+
+> `wget -q -O - https://updates.atomicorp.com/installers/atomic | sudo bash`
+
+> `apt-get install ossec-hids-server`
+
+> `apt-get install ossec-hids-agent`
+
+> `/var/ossec/bin/manage_agents`
+
+> `/var/ossec/bin/ossec-control start`
+
+### Consejos
+Para desbanear la ip de la maquina atacante podemos usar los siguientes comandos:
+> `/var/ossec/active-response/bin/host-deny.sh delete - 10.11.49.55`
+
+> `/var/ossec/active-response/bin/firewall-drop.sh delete - 10.11.49.55`
+
+Los registros (logs) se pueden ver de la siguiente manera:
+> `tail /var/ossec/logs/ossec.log`
+
+> `tail /var/ossec/logs/active-responses.log`

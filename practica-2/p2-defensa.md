@@ -33,7 +33,39 @@ Obtenga la relación de las direcciones MAC de los equipos de su segmento.
 > `nmap -sP 10.11.48.0/23`
 
 ## APARTADO D
-> *Apartado incompleto.*
+> ettercap -6 -T -q -i ens33 -M arp:remote //2002:a0b:3136::1/ //::10.11.48.1/
+
+**Script scanner:**
+> [!Warning]
+> No sabemos si es lo que piden
+
+```bash
+#!/bin/bash
+
+# Paso 1: Generar direcciones IPv4 y guardarlas en un archivo
+seq -f "10.11.49.%g" 1 254 > ipv4_addresses.txt
+
+# Paso 2: Convertir las direcciones IPv4 a IPv6 y guardarlas en otro archivo
+while read -r ipv4; do
+
+    ipv6="2002:$(printf "%02x%02x:%02x%02x" $(echo $ipv4 | tr '.' ' '))"
+    ipv6="$ipv6::1"
+    echo "$ipv6" >> ipv6_addresses.txt
+done < ipv4_addresses.txt
+
+
+# Paso 3: Escanear todas las direcciones IPv6 simultáneamente
+nmap -6 -sn -iL ipv6_addresses.txt
+
+# Limpiar archivos temporales
+rm ipv4_addresses.txt
+rm ipv6_addresses.txt
+
+
+```
+
+
+
 
 Obtenga la relación de las direcciones IPv6 de su segmento.
 > `ping6 -c2 -I ens33 ff02::1`
@@ -53,9 +85,9 @@ Se puede ver en *Statistics > HTTP > Requests*
 Instale metasploit. Haga un ejecutable que incluya Reverse TCP meterpreter payload para plataformas linux. Inclúyalo en un filtro ettercap y aplique toda su sabiduría en ingeniería social para que una víctima u objetivo lo ejecute.
 
 ## APARTADO H
-> *Apartado incompleto.*
-
+> *Apartado incompleto*
 Haga un MITM en IPv6 y visualice la paquetería.
+
 
 ## APARTADO I
 Pruebe alguna herramienta y técnica de detección del sniffing (preferiblemente arpon).

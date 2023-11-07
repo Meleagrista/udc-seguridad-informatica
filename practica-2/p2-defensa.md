@@ -251,8 +251,14 @@ Instale y configure modsecurity. Vuelva a proceder con el ataque del apartado an
 # disruption.
 #
 SecRuleEngine On
+
+SecConnEngine On 
+
+SecConnReadStateLimit 10
+
+SecConnWriteStateLimit 10
+
 ```
-- Change `SecRuleEngine` from `DetectionOnly` to `On`
 > `apt install libapache2-mod-evasive`
 
 > `a2enmod evasive`

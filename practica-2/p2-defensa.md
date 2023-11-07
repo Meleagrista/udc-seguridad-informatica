@@ -136,9 +136,8 @@ Salimos cuando queramos
 En la máquina de la víctima simulamos una descarga del href introducido:
 
 ## APARTADO H
-> ettercap -6 -T -q -i ens33 -M arp:remote //2002:a0b:3136::1/ //::10.11.48.1/
 Haga un MITM en IPv6 y visualice la paquetería.
-
+> ettercap -6 -T -q -i ens33 -M arp:remote //2002:a0b:3136::1/ //::10.11.48.1/
 
 ## APARTADO I
 Pruebe alguna herramienta y técnica de detección del sniffing (preferiblemente arpon).
@@ -231,8 +230,8 @@ Ataque un servidor apache instalado en algunas de las máquinas del laboratorio 
 ### APARTADO O
 Instale y configure modsecurity. Vuelva a proceder con el ataque del apartado anterior. ¿Qué acontece ahora?
 
-> [!Note]
-> ver lista de mods : apachectl -M
+> [!Note]ç
+- Para ver la lista de modulos activos usar `apachectl -M`.
 
 > `apt install libapache2-mod-security2`
 
@@ -246,10 +245,6 @@ Instale y configure modsecurity. Vuelva a proceder con el ataque del apartado an
 
 > `nano /etc/modsecurity/modsecurity.conf`
 ```
-# Enable ModSecurity, attaching it to every transaction. Use detection
-# only to start with, because that minimises the chances of post-installation
-# disruption.
-#
 SecRuleEngine On
 
 SecConnEngine On 
@@ -257,7 +252,6 @@ SecConnEngine On
 SecConnReadStateLimit 10
 
 SecConnWriteStateLimit 10
-
 ```
 > `apt install libapache2-mod-evasive`
 
@@ -280,43 +274,35 @@ SecConnWriteStateLimit 10
     #DOSLogDir           "/var/log/mod_evasive"
 </IfModule>
 ```
+> `wget http://ftp.us.debian.org/debian/pool/main/liba/libapache2-mod-qos/libapache2-mod-qos_11.74-1+b1_amd64.deb`
 
-OWASP ModSecurity Core Rule Set
+> `dpkg -i libapache2-mod-qos_11.74-1+b1_amd64.deb`
 
+- Se puede modificar el `qos.conf` para aplicar las reglas.
+
+### OWASP ModSecurity Core Rule Set
 The OWASP ModSecurity Core Rule Set (CRS) is a set of generic attack detection rules for use with ModSecurity or compatible web application firewalls. The CRS aims to protect web applications from a wide range of attacks, including the OWASP Top Ten, with a minimum of false alerts. The CRS provides protection against many common attack categories, including SQL Injection, Cross Site Scripting, and Local File Inclusion.
 
-Primero, elimina el conjunto de reglas actual que viene preempaquetado con ModSecurity ejecutando el siguiente comando:
-
+1. Elimina el conjunto de reglas actual que viene preempaquetado con ModSecurity ejecutando el siguiente comando:
 ```bash
 rm -rf /usr/share/modsecurity-crs
 ```
-
-Asegúrate de que git esté instalado:
-
+2. Asegúrate de que git esté instalado:
 ```bash
 apt install git
 ```
-
-Clona el repositorio de GitHub de OWASP-CRS en el directorio /usr/share/modsecurity-crs:
-
+3. Clona el repositorio de GitHub de OWASP-CRS en el directorio /usr/share/modsecurity-crs:
 ```bash
 git clone https://github.com/coreruleset/coreruleset /usr/share/modsecurity-crs
 ```
-
-Renombra el archivo crs-setup.conf.example a crs-setup.conf:
-
+4. Renombra el archivo crs-setup.conf.example a crs-setup.conf:
 ```bash
 mv /usr/share/modsecurity-crs/crs-setup.conf.example /usr/share/modsecurity-crs/crs-setup.conf
 ```
-
-Renombra el archivo de reglas de exclusión de solicitudes predeterminado:
-
+5. Renombra el archivo de reglas de exclusión de solicitudes predeterminado:
 ```bash
 mv /usr/share/modsecurity-crs/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example /usr/share/modsecurity-crs/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
 ```
-
-
-
 ## APARTADO P
 1. Obtenga de forma pasiva el direccionamiento público IPv4 e IPv6 asignado a la Universidade da Coruña.
 > `whois -h whois.ripe.net UDC`

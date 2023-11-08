@@ -128,9 +128,9 @@ msf6 exploit(multi/handler) > exploit
 [*] Sending stage (36 bytes) to 10.11.49.106
 [*] Command shell session 1 opened (10.11.48.50:4444 -> 10.11.49.106:56054) at 2022-11-03 13:55:42 +0100
 ```
-
 Ahora estamos dentro del cliente desde el atacante.
-- Para salir podemos usar: `msf6 exploit(multi/handler) > exit`
+> [!Note]
+> Para salir podemos usar: `msf6 exploit(multi/handler) > exit`
 
 > :question: No entiendo que quieres decir a continuación:
 
@@ -139,7 +139,9 @@ Para comprobar si funciona, en la máquina de la víctima simulamos una descarga
 ## APARTADO H
 Haga un MITM en IPv6 y visualice la paquetería.
 > `ettercap -6 -T -q -i ens33 -M arp:remote //2002:a0b:3136::1/ //::10.11.48.1/`
-- El resto funciona como el [segundo apartado](https://github.com/Meleagrista/legislacion-seguridad-informatica/edit/main/practica-2/p2-defensa.md#apartado-b).
+
+> [!Note]
+> El resto funciona como el [segundo apartado](https://github.com/Meleagrista/legislacion-seguridad-informatica/edit/main/practica-2/p2-defensa.md#apartado-b).
 
 ## APARTADO I
 Pruebe alguna herramienta y técnica de detección del sniffing (preferiblemente arpon).
@@ -160,18 +162,25 @@ Pruebe alguna herramienta y técnica de detección del sniffing (preferiblemente
 ```
 - Para saber la dirección mac: `ip addr show`
 > `arpon -d -i ens33 -H`
-- Para cerrar los procesos de arpon usar `ps -A | grep arpon` y luego `kill <process>`.
 
-### *Advertencias*
-1. Tras instalar `arpon` es necesario desahbilitarlo para que no se inicie en boot.
-2. Como medida de seguridad es recomendable usar `shutdown -r +10` para programar un reinicio mientras se trabaja con `arpon` para evitar quedarte fuera.
+> [!Note]
+> Para cerrar los procesos de arpon usar `ps -A | grep arpon` y luego `kill <process>`.
+
+> [!Note]
+> Tras instalar `arpon` es necesario deshabilitarlo para que no se inicie en boot.
+
+Como medida de seguridad es recomendable usar `shutdown -r +10` para programar un reinicio mientras se trabaja con `arpon` para evitar quedarte fuera.
+> [!Warning]
 > Si no está desahabilitado esto es inutil.
-3. Usar el comando `kill` para cerrarlo, y despues siempre maskearlo, si no desinstalarlo, cuando dejes de usarlo.
+
+Es necesario usar el comando `kill` para cerrarlo, y despues siempre maskearlo, si no desinstalarlo, cuando dejes de usarlo.
 
 ## APARTADO J
 Pruebe distintas técnicas de host discovery, port scanning y OS fingerprinting sobre la máquinas del laboratorio de prácticas en IPv4.
 > `nmap -A 10.11.48.0/23 > nmap_full.txt`
-- Puede ser increiblemente lento, es recomendable usarlo en ips individuales.
+
+> [!Note]
+> Puede ser increiblemente lento, es recomendable usarlo en ips individuales.
 
 ### CONTINUACIÓN DEL APARTADO
 1. Realice alguna de las pruebas de port scanning sobre IPv6.
@@ -194,8 +203,11 @@ Obtenga información "en tiempo real" sobre las conexiones de su máquina, así 
 Monitoremos nuestra infraestructura:
 
 ### 1. APARTADO M
-¿Cómo podría hacer un DoS de tipo direct attack contra un equipo de la red de prácticas?
-¿Y mediante un DoS de tipo reflective flooding attack?
+1. ¿Cómo podría hacer un DoS de tipo direct attack contra un equipo de la red de prácticas?
+> ...
+
+2. ¿Y mediante un DoS de tipo reflective flooding attack?
+> ...
 
 ### 2. APARTADO N
 Ataque un servidor apache instalado en algunas de las máquinas del laboratorio de prácticas para tratar de provocarle una DoS. Utilice herramientas DoS que trabajen a nivel de aplicación (capa 7).
@@ -364,18 +376,19 @@ Reportar alarmas está muy bien, pero no estaría mejor un sistema activo, en lu
 
 > `apt-get install ossec-hids-agent`
 
-- Para más información sobre la instalación se puede consultar la [siguiente página](https://www.ossec.net/docs/docs/manual/installation/installation-requirements.html) para ver los requisitos de instalación y la [siguiente página](https://www.ossec.net/download-ossec/) para ver los métodos de instalación.
 > `/var/ossec/bin/manage_agents`
 
 > `/var/ossec/bin/ossec-control start`
 
+Para más información sobre la instalación se puede consultar la [siguiente página](https://www.ossec.net/docs/docs/manual/installation/installation-requirements.html) para ver los requisitos de instalación y la [siguiente página](https://www.ossec.net/download-ossec/) para ver los métodos de instalación.
+
 ### Consejos
-Para desbanear la ip de la maquina atacante podemos usar los siguientes comandos:
+1. Para desbanear la ip de la maquina atacante podemos usar los siguientes comandos:
 > `/var/ossec/active-response/bin/host-deny.sh delete - 10.11.49.55`
 
 > `/var/ossec/active-response/bin/firewall-drop.sh delete - 10.11.49.55`
 
-Los registros (logs) se pueden ver de la siguiente manera:
+2. Los registros (logs) se pueden ver de la siguiente manera:
 > `tail /var/ossec/logs/ossec.log`
 
 > `tail /var/ossec/logs/active-responses.log`
@@ -385,3 +398,14 @@ Supongamos que una máquina ha sido comprometida y disponemos de un fichero con 
 > `cat /var/log/auth.log | /var/ossec/bin/ossec-logtest -a`
 
 > `cat /var/log/auth.log | /var/ossec/bin/ossec-logtest -a |/var/ossec/bin/ossec-reportd`
+
+Mi propio codigo para ver los errores por orden es:
+```bash
+command_to_generate_output="cat /var/log/auth.log | /var/ossec/bin/ossec-logtest -a"
+
+(eval "$command_to_generate_output") >> ossec_output.txt
+
+awk '/\(level [0-9]+\)/ {print a[NR-2] "---" a[NR-1] "---" $0 "---" ; next} {a[NR]=$0}' ossec_output.txt | awk -F"\\(level |\\)" '{print "Level: " $2 "---" $0}' | sort>
+
+rm ossec_output.txt
+```

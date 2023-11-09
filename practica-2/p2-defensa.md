@@ -201,15 +201,24 @@ Obtenga información "en tiempo real" sobre las conexiones de su máquina, así 
 
 ## APARTADO L
 Monitoremos nuestra infraestructura:
+1. Instale `prometheus` y `node_exporter` y configurelos para recopliar todo tipo de métricas de su maquina linux.
+2. Posteriormente instale `grafana` y agregue como fuente de datos las métricas de su equipo de prometheus.
+3. Importe vía grafana el dashboard 1860.
+4. En los ataques de los apartados m y n busque posibles alteraciones en las metricas visualizadas.
 
-### 1. APARTADO M
+> [!Note]
+> Para instalar Firewalld, visitar [esta pagina](https://computingforgeeks.com/how-to-install-and-configure-firewalld-on-debian/).
+
+Para instalar todos los programas seguir [este tutorial](https://medium.com/@ismaelaguilera_/instalación-y-configuración-de-prometheus-grafana-centos8-331c0e43ccc1).
+
+## APARTADO M
 1. ¿Cómo podría hacer un DoS de tipo direct attack contra un equipo de la red de prácticas?
 > ...
 
 2. ¿Y mediante un DoS de tipo reflective flooding attack?
 > ...
 
-### 2. APARTADO N
+## APARTADO N
 Ataque un servidor apache instalado en algunas de las máquinas del laboratorio de prácticas para tratar de provocarle una DoS. Utilice herramientas DoS que trabajen a nivel de aplicación (capa 7).
 > `apt install apache2`
 
@@ -240,7 +249,7 @@ Crear archivo `slowlorys.pl` y copiar contenido de [aqui](https://github.com/GHu
 3. ¿Cómo podría tratar de saltarse dicha protección?
 > ...
 
-### 3. APARTADO O
+## APARTADO O
 Instale y configure modsecurity. Vuelva a proceder con el ataque del apartado anterior. ¿Qué acontece ahora?
 > [!Note]
 > Para ver la lista de modulos activos usar `apachectl -M`.
@@ -293,7 +302,7 @@ SecConnWriteStateLimit 10
 > [!Note]
 > Se puede modificar el `qos.conf` para aplicar las reglas.
 
-#### OWASP ModSecurity Core Rule Set
+### OWASP ModSecurity Core Rule Set
 The OWASP ModSecurity Core Rule Set (CRS) is a set of generic attack detection rules for use with ModSecurity or compatible web application firewalls. The CRS aims to protect web applications from a wide range of attacks, including the OWASP Top Ten, with a minimum of false alerts. The CRS provides protection against many common attack categories, including SQL Injection, Cross Site Scripting, and Local File Inclusion.
 
 1. Elimina el conjunto de reglas actual que viene preempaquetado con ModSecurity ejecutando el siguiente comando:

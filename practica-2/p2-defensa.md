@@ -400,6 +400,9 @@ Para más información sobre la instalación se puede consultar la [siguiente p�
 
 > `/var/ossec/active-response/bin/firewall-drop.sh delete - 10.11.49.55` <- `iptables -L`
 
+> [!Warning]
+> El segundo comando puede dar errores. Si se queda pillado borrar el archivo `fw-drop` o en la carpeta principal o en `/var/ossec/active-response/bin/`.
+
 2. Los registros (logs) se pueden ver de la siguiente manera:
 > `tail /var/ossec/logs/ossec.log` 
 

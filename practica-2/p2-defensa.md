@@ -396,12 +396,12 @@ Para más información sobre la instalación se puede consultar la [siguiente p�
 
 ### Consejos
 1. Para desbanear la ip de la maquina atacante podemos usar los siguientes comandos:
-> `/var/ossec/active-response/bin/host-deny.sh delete - 10.11.49.55`
+> `/var/ossec/active-response/bin/host-deny.sh delete - 10.11.49.55` <- `cat /etc/hosts.deny`
 
-> `/var/ossec/active-response/bin/firewall-drop.sh delete - 10.11.49.55`
+> `/var/ossec/active-response/bin/firewall-drop.sh delete - 10.11.49.55` <- `iptables -L`
 
 2. Los registros (logs) se pueden ver de la siguiente manera:
-> `tail /var/ossec/logs/ossec.log`
+> `tail /var/ossec/logs/ossec.log` 
 
 > `tail /var/ossec/logs/active-responses.log`
 

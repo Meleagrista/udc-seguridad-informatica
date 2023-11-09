@@ -372,12 +372,12 @@ Reportar alarmas está muy bien, pero no estaría mejor un sistema activo, en lu
 
 > `wget -q -O - https://updates.atomicorp.com/installers/atomic | sudo bash`
 
-> `apt-get install ossec-hids-server`
+> `apt-get install ossec-hids-agent`
 
 > [!Note]
 > Si no se encuentra el paquete, probar a usar: `apt-get update`
 
-> `apt-get install ossec-hids-agent`
+> `apt-get install ossec-hids-server`
 
 > `/var/ossec/bin/manage_agents`
 

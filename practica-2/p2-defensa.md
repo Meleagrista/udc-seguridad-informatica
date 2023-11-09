@@ -374,6 +374,9 @@ Reportar alarmas está muy bien, pero no estaría mejor un sistema activo, en lu
 
 > `apt-get install ossec-hids-server`
 
+> [!Note]
+> Si no se encuentra el paquete, probar a usar: `apt-get update`
+
 > `apt-get install ossec-hids-agent`
 
 > `/var/ossec/bin/manage_agents`

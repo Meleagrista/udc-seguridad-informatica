@@ -383,8 +383,12 @@ Para más información sobre la instalación se puede consultar la [siguiente p�
 
 ### Consejos
 1. Para desbanear la ip de la maquina atacante podemos usar los siguientes comandos:
-> `/var/ossec/active-response/bin/host-deny.sh delete - 10.11.49.55` <- `cat /etc/hosts.deny`
-> `iptables -D INPUT -s 10.11.49.55 -j DROP <- `iptables -L`
+> `/var/ossec/active-response/bin/host-deny.sh delete - 10.11.49.55`
+
+> `iptables -D INPUT -s 10.11.49.55 -j DROP`
+
+> [!Notes]
+> Se puede ver quien esta baneado con estos comandos: `cat /etc/hosts.deny` y `iptables -L`
 
 > [!Warning]
 > El segundo comando puede dar errores. Si se queda pillado borrar el archivo `fw-drop` o en la carpeta principal o en `/var/ossec/active-response/bin/`.

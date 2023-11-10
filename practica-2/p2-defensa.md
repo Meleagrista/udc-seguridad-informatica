@@ -128,7 +128,7 @@ exploit -j -z
 ```
 Ahora estamos dentro del cliente desde el atacante.
 > [!Note]
-> Para salir podemos usar: `msf6 exploit(multi/handler) > exit`
+> Para salir podemos usar: `msf6 exploit(multi/handler) > exit -y`
 
 
 ## APARTADO H

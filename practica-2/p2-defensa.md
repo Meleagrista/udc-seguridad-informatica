@@ -245,6 +245,8 @@ Instale y configure modsecurity. Vuelva a proceder con el ataque del apartado an
 
 > `a2enmod headers`
 
+> `a2enmod security2`
+
 > `systemctl restart apache2`
 
 > `cp /etc/modsecurity/modsecurity.conf-recommended app`

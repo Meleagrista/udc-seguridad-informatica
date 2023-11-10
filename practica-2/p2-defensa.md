@@ -387,7 +387,7 @@ Para más información sobre la instalación se puede consultar la [siguiente p�
 
 > `iptables -D INPUT -s 10.11.49.55 -j DROP`
 
-> [!Notes]
+> [!Note]
 > Se puede ver quien esta baneado con estos comandos: `cat /etc/hosts.deny` y `iptables -L`
 
 > [!Warning]

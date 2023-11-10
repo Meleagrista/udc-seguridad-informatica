@@ -61,16 +61,10 @@ rm ipv6_addresses.txt
 > Esta linea de comandos está obsoleta: `ping6 -c2 -I ens33 ff02::1`
 
 ## APARTADO E
-> [!Warning]
-> No estoy seguro de haber hecho este apartado, pero parece ser repetido.
-
 Obtenga el tráfico de entrada y salida legítimo de su interface de red `ens33` e investigue los servicios, conexiones y protocolos involucrados.
 > `tcpdump -i ens33 -s 65535 -w my.pcap`
 
 ## APARTADO F
-> [!Warning]
-> No estoy seguro de haber hecho este apartado, pero parece ser repetido.
-
 Mediante `arpspoofing` entre una máquina objeto (víctima) y el router del laboratorio obtenga todas las URL HTTP visitadas por la víctima.
 - Utilizamos el archivo `pcap` obtenido de la máquina de nuestro compañero.
 

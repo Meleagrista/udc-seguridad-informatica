@@ -99,7 +99,7 @@ if (ip.proto == TCP && tcp.src == 80) {
 8. Llegados a este punto, desde el cliente vemos la pagina y nos descargamos el virus:
 >  `lynx http://example.org`
 
-> [!Notes]
+> [!Note]
 > Podemos hacer tambien un curl, y descargar el link del payload con wget
 
 1. Damos permisos de ejecucion 

@@ -21,6 +21,7 @@ Capture paquetería variada de su compañero de prácticas que incluya varias se
 > `scp lsi@10.11.49.54:/home/lsi/compa.pcap .`
 
 4. Ejecutamos Wireshark y abrimos el archivo compa.pcap para comenzar a analizar.
+
 ### APARTADOS COMPLEMENTARIOS
 
 - Filtre la captura para obtener el tráfico HTTP.
@@ -93,6 +94,22 @@ Cositas que se inventa chat gpt que no probe (pinta locales) :
 # E - Trafico en Ens33
 
 > `tcpdump -i ens33 -s 65535 -w my.pcap
+
+>[!Warning]
+> VER URL EN TIEMPO REAL
+
+Configuramos el remote browser asi
+
+Vamos a ``/etc/etter.conf`` y alli configuramos las cosas con un navegador que queramos
+ej xdg-open
+
+Añadimos :
+
+`remote_browser = "xdg-open http://%host%url"`
+
+
+> `xdg-open &` ← no se si hace falta (se supone que corre en segundo plano)
+> `ettercap -P remote_browser -T -q -i ens33 -M arp:remote //10.11.49.55/ //10.11.48.1/`
 
 # F - Spoffing
 
@@ -316,6 +333,7 @@ Desde la maquina virtual no funcionan esta serie de comandos, hay que hacerlos d
 
 
 
+
 4. En caso negativo, obtenga todos los nombres.dominio posibles de la UDC.
 
 > `nmap --script hostmap-crtsh.nse udc.es`
@@ -323,6 +341,12 @@ Desde la maquina virtual no funcionan esta serie de comandos, hay que hacerlos d
 5. ¿Qué gestor de contenidos se utiliza en [www.usc.es](http://www.usc.es/)?
 
 > `whatweb www.usc.es`
+
+
+6. Traduccion Inversa :
+
+`host <dirección IP>` o `dig -x <dirección IP>`
+
 
 
 # Q - Perfiles principales

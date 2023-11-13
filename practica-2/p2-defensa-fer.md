@@ -51,6 +51,45 @@ Capture paquetería variada de su compañero de prácticas que incluya varias se
 
 Usamos el script (xd)
 
+
+> [!warning] 
+> PRUEBA ESTO MAÑANA
+
+
+SCRIPT DE GUIILLEN
+
+```python
+import ipaddress
+
+# Abre el archivo con direcciones IPv4 y crea un archivo para las direcciones IPv6
+with open('ipv4.txt', 'r') as ipv4_file, open('ipv6_addresses.txt', 'w') as ipv6_file:
+    for line in ipv4_file:
+        if "Host" in line:  # Filtra solo las líneas que contienen "Host"
+            parts = line.split()
+            ipv4_address = parts[1]  # La dirección IPv4 está en la segunda columna
+            try:
+                ipaddress.IPv4Address(ipv4_address)  # Verifica si es una dirección IPv4 válida
+                ipv6 = ipaddress.IPv6Address(f'2002::{ipv4_address}')  # Realiza el mapeo a IPv6 con el prefijo 2002
+                ipv6_file.write(str(ipv6) + '\n')  # Escribe la dirección IPv6 en el archivo
+            except ipaddress.AddressValueError:
+                pass  # Ignora las líneas que no son direcciones IPv4 válidas
+
+print("Conversiones completadas. Las direcciones IPv6 se han guardado en ipv6_addresses.txt con el prefijo 2002.")
+```
+
+Ahora con este archivo usamos
+
+`sudo nmap -6 -sP -iL archivo.txt`
+o
+`nmap -6 -sn -iL ipv6_addresses.txt` ← Este no ve los puertos solo si esta encendido, mejor este
+
+
+Cositas que se inventa chat gpt que no probe (pinta locales) : 
+
+`sudo nmap -6 -sP fe80::/64`
+
+
+
 # E - Trafico en Ens33
 
 > `tcpdump -i ens33 -s 65535 -w my.pcap

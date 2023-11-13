@@ -100,7 +100,7 @@ if (ip.proto == TCP && tcp.src == 80) {
 >  `lynx http://example.org`
 
 > [!Note]
-> Podemos hacer tambien un curl, y descargar el link del payload con wget
+> Podemos hacer tambien un `curl`, y descargar el link del payload con `wget`.
 
 1. Damos permisos de ejecucion 
 > `chmod +x payload.bin`

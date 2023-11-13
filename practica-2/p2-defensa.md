@@ -200,10 +200,12 @@ Para instalar todos los programas seguir [este tutorial](https://medium.com/@ism
 
 ## APARTADO M
 1. ¿Cómo podría hacer un DoS de tipo direct attack contra un equipo de la red de prácticas?
-> ...
+> A direct attack is when an attacker sends a massive amount of traffic directly to your server. The traffic overwhelms your server’s ability to process requests. When it can’t process any more requests, your websites won’t load anymore.
 
 2. ¿Y mediante un DoS de tipo reflective flooding attack?
-> ...
+> A reflection attack is a bit more complex. An attacker tricks a third computer or network into sending overwhelming amounts of legitimate traffic to your server. NTP synchronizes clocks between computer systems. Servers use NTP to ask each other what time it is. To use NTP in a reflection DoS attack, the attacker sends time and date requests to a third computer via NTP while spoofing your IP address.
+>
+> By spoofing your IP, the attacker sends requests, but the response to those requests is sent to your server. This can create a DoS attack because while the the attacker's request is very small, usually a single packet of about 50 bytes, the response has up to 10 packets between 100 and 500 bytes each. The attacker can send a relatively small amount of traffic that bounces back as a huge amount of traffic to overwhelm your server.
 
 ## APARTADO N
 Ataque un servidor apache instalado en algunas de las máquinas del laboratorio de prácticas para tratar de provocarle una DoS. Utilice herramientas DoS que trabajen a nivel de aplicación (capa 7).
@@ -230,11 +232,11 @@ Crear archivo `slowlorys.pl` y copiar contenido de [aqui](https://github.com/GHu
 > `perl slowloris.pl -dns 10.11.49.55`
 
 1. ¿Cómo podría proteger dicho servicio ante este tipo de ataque?
-> Con un firewall de aplicaciones web como modsecurity.
+> Con un firewall de aplicaciones web como modsecurity. Además, se deben implementar medidas de seguridad adicionales, como la configuración adecuada de listas de control de acceso (ACL), la actualización regular de software y sistemas operativos para corregir vulnerabilidades conocidas, y la monitorización constante del tráfico de red para detectar patrones sospechosos que podrían indicar un ataque. También es crucial educar a los usuarios sobre las prácticas seguras, como el uso de contraseñas fuertes y la autenticación de dos factores.
 2. ¿Y si se produjese desde fuera de su segmento de red?
-> ...
+> Si el ataque proviene desde fuera del segmento de red, es importante implementar un firewall de red para filtrar y bloquear el tráfico no autorizado. Además, se puede utilizar una red privada virtual (VPN) para establecer conexiones seguras y cifradas desde ubicaciones externas. La configuración de reglas de firewall específicas y la segmentación de la red son prácticas efectivas para limitar el acceso no autorizado desde fuera del segmento de red.
 3. ¿Cómo podría tratar de saltarse dicha protección?
-> ...
+> No se debe buscar ni intentar saltarse ninguna protección de seguridad. Sin embargo, desde una perspectiva educativa y ética, entender cómo se pueden superar las defensas puede ser valioso para fortalecer la seguridad. Para mejorar la protección, se podrían explorar técnicas como la inyección de SQL, ataques de fuerza bruta, o vulnerabilidades específicas del software utilizado. Luego, se deben tomar medidas para mitigar estos riesgos, como la validación adecuada de entradas, la aplicación de parches de seguridad y la configuración correcta de políticas de acceso.
 
 ## APARTADO O
 Instale y configure modsecurity. Vuelva a proceder con el ataque del apartado anterior. ¿Qué acontece ahora?

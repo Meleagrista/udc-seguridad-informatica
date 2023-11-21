@@ -1,0 +1,106 @@
+# APARTADO A
+> `ssh -v`
+
+> `ssh -vvv`
+
+## Ficheros configuración
+Ver si hay y que causa que se añadan usuarios a `ssh_known_hosts`.
+
+Tiene que dar soporte a las claves publicas.
+
+> [!Question]
+> Nivel servidor y no nivel usuario.
+
+## Cifrado
+Usar `scp` y ver el `man` saber cuales de los 18 la maquina acepta.
+
+## Clave publica
+Certificado publico y privado. Es bidireccional y simetrico y tiene que tener un sello de verificación al final. 
+
+> [!Note]
+> Conectarse con usuario lsi.
+
+En origen la privado, en destino la publica.
+
+> [!Note]
+> `~/.ssh/id-rsa.pub`
+
+> [!Warning]
+> Pasarlo no con `scp` porque sobreescribe, necesitamos que concatene.
+
+> [!Warning]
+> Va a haber problemas porque todos los nombres son iguales. Usar papel para llevar la cuenta.
+
+## Securizar servicio tunel ssh
+Coger una conexion no segura (puerto 80) y securizarla.
+
+> [!Note]
+> Para comprobar usar `tcpdump` no deberiamos poder leerla.
+
+> [!Question]
+> No usarlo en localhost y interfaces virtuales.
+
+## Montaje directorio compartido (dropbox).
+
+# APARTADO B
+
+### XSELF-SIGNED CERTIFICATE
+> [!Warning]
+> Esto no es lo que piden.
+
+### AUTORIDAD CERTIFICADORA
+
+Vamos a crear una autoridad certificadora.
+
+Colocar la clave publica en un sitio (y mi compañero) para que confie.
+
+> [!Warning]
+> No usar nuestra clave como autoridad.
+
+Hacer que apache tenga tambien sus clavesy actuar como tres entidades independientes. Crear un par por cada entidad que solicite.
+
+> [!Note]
+> Dos entidades certificadoras, una por maquina.
+
+> [!Warning]
+> Ojo a que certificamos a futuro.
+
+> [!Warning]
+> No cuñar las privadas.
+
+1. `KentPub` & `KentPriv`
+2. `KserPub` & `KserPriva` 
+Confifurar `conf` con `KserPriv`, `KserPub` y `KentPub`.
+3. http://ip & https://ip/secure
+
+Va a checkear los certificados.
+
+> [!Note]
+> La segunda pagina está bajo un directorio seguro.
+
+# APARTADO C
+Configurar un servidor.
+
+> [!Warning]
+> Los wrappers pueden bloqueas las ips de la vpn.
+
+> [!Warning]
+> No usar las ips de la clase.
+
+> [!Note]
+> La iptable tiene que permitir el trafico. Tambien ens33, ens34, 6to4 y la vpn, ambos con ping, ifconfig y ssh.
+
+Hay que confirmar cada cosa despues de añadir nada.
+
+> [!Note]
+> Usar el twist para confirmar si esta capado por los wrappers, el mensaje se ven en los logs personales.
+
+Usar `netstat -tulip` y `netstat -putona`
+
+> [!Note]
+> Que se levanten las reglas en arranque queda bien.
+
+> [!Warning]
+> Usar la técnica del `arpon`.
+
+Especialmente la pre-shared key.

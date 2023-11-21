@@ -50,6 +50,9 @@ Coger una conexion no segura (puerto 80) y securizarla.
 
 ### AUTORIDAD CERTIFICADORA
 
+> [!Note]
+> Cargarnos el `prometeus`, `grafana` y `metasploit`
+
 Vamos a crear una autoridad certificadora.
 
 Colocar la clave publica en un sitio (y mi compañero) para que confie.

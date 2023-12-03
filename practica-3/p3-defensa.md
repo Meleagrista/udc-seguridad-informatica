@@ -190,6 +190,23 @@ ff02::1 ip6-allnodes
 ff02::2 ip6-allrouters
 ```
 
+Añadimos este codigo en ``/etc/apache2/sites-available/000-default.conf``
+
+```
+<Directory /var/www/html/secure/ >
+       Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+        SSLRequireSSL
+</Directory>
+
+```
+
+Creamos una carpeta llamada secure en /var/ww/html y metemos dentro una copia de index.html (cambiala un poco para saber que va)
+
+Ahora usando ``lynx http://Usuario`` deberia soltar un error 403
+
+
 ## APARTADO 3
 Tomando como base de trabajo el openVPN deberá configurar una VPN entre dos equipos virtuales del laboratorio que garanticen la confidencialidad entre sus comunicaciones.
 

@@ -29,12 +29,12 @@ Configure su cliente y servidor para permitir conexiones basadas en un esquema d
 
 > `ssh-keygen -t rsa`
 
-> [!Notes]
+> [!Note]
 > Otras opciones son `ssh-keygen -t ed25519` o `ssh-keygen -t ecdsa`.
 
 > `ssh-copy-id -i $HOME/.ssh/id_rsa.pub lsi@10.11.48.70`
 
-> [!Notes]
+> [!Note]
 > De forma manual se puede hacer de la siguiente forma.
 
 ```bash
@@ -44,7 +44,7 @@ lsi@debian:~$ nano authorized_keys # Dejamos vacio
 lsi@debian:~$ cat ../keys_compañero/id_rsa.pub >> authorized_keys
 ```
 
-> [!Notes]
+> [!Note]
 > Si se usan otras opciones se añadiría la clave correspondiente.
 
 ```bash
@@ -60,7 +60,7 @@ Estando en la maquina de nuestro compañero:
 
 > `wget localhost:10080` # Devuelve mi puerto 80.
 
-> [!Notes]
+> [!Note]
 > Esto redirecciona el `localhost`, si quisiera que redireccionara la ip se tiene añadir al principio.
 
 > `ssh -L 10.11.49.55:10080:10.11.49.54:80 lsi@10.11.49.55`
@@ -86,7 +86,7 @@ Configure su Autoridad Certificadora en su equipo.
 
 > `./CA.pl -newca`
 
-> [!Notes]
+> [!Note]
 > _CA certificate is in ./demoCA/cacert.pem_
 
 ### APARTADO 2B
@@ -95,13 +95,13 @@ Cree su propio certificado para ser firmado por la Autoridad Certificado. Bueno,
 1. Generamos certificado para nuestro propio servidor:
 > `./CA.pl -newreq-nodes`
 
-> [!Notes]
+> [!Note]
 > _Request is in newreq.pem, private key is in newkey.pem_
 
 2. Firmamos el certificado:
 > `./CA.pl -sign`
 
-> [!Notes]
+> [!Note]
 > _Signed certificate is in newcert.pem_
 
 ### APARTADO 2C

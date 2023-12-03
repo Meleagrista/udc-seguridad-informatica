@@ -251,9 +251,12 @@ Para eso creamos tres scripts:
 ```bash
 #!/bin/sh
 
+#!/bin/sh
+
 ipCompa=10.11.49.54
 ip6Compa=2002:a0b:3137::1
 ipCompaVPN=172.160.0.2
+ipVPN=172.160.0.1/21
 ipVPN_1=10.20.32.0/21 # EDUROAM
 ipVPN_2=10.30.8.0/21 # VPN FIC
 servidorDNS1=10.8.12.49
@@ -296,8 +299,8 @@ iptables -A INPUT -s $ipCompa -p ipv6 -j ACCEPT
 iptables -A OUTPUT -d $ipCompa -p ipv6 -j ACCEPT
 
 # SSH
-iptables -A INPUT -s $ipVPN_1,$ipVPN_2,$ipCompa -p TCP --dport 22 -m conntrack --ctstate NEW -j ACCEPT
-iptables -A OUTPUT -d $ipCompa -p TCP --dport 22 -m conntrack --ctstate NEW -j ACCEPT
+iptables -A INPUT -s $ipVPN_1,$ipVPN_2,$ipCompa,$ipVPN -p TCP --dport 22 -m conntrack --ctstate NEW -j ACCEPT
+iptables -A OUTPUT -d $ipCompa,$ipVPN -p TCP --dport 22 -m conntrack --ctstate NEW -j ACCEPT
 # ------------------------------------------------------------------------------------------------------
 ip6tables -A INPUT -s $ip6Compa -p tcp --dport 22 -m conntrack --ctstate NEW -j ACCEPT
 ip6tables -A OUTPUT -d $ip6Compa -p tcp --dport 22 -m conntrack --ctstate NEW -j ACCEPT
@@ -324,8 +327,8 @@ iptables -A INPUT -s $ipCompa -p TCP --dport 443 -m conntrack --ctstate NEW -j A
 iptables -A OUTPUT -d $ipCompa -p TCP --dport 443 -m conntrack --ctstate NEW -j ACCEPT
 
 # ICMP
-iptables -A INPUT -s $ipCompa,$ipCompaVPN,$ipLocalhost -p ICMP -m conntrack --ctstate NEW -j ACCEPT
-iptables -A OUTPUT -d $ipCompa,$ipCompaVPN,$ipLocalhost -p ICMP -m conntrack --ctstate NEW -j ACCEPT
+iptables -A INPUT -s $ipCompa,$ipCompaVPN,$ipLocalhost,$ipVPN -p ICMP -m conntrack --ctstate NEW -j ACCEPT
+iptables -A OUTPUT -d $ipCompa,$ipCompaVPN,$ipLocalhost,$ipVPN -p ICMP -m conntrack --ctstate NEW -j ACCEPT
 # ----------------------------------------------------------------------------------------------------
 ip6tables -A INPUT -s $ip6Compa,$ip6Localhost -p icmpv6 -m conntrack --ctstate NEW -j ACCEPT
 ip6tables -A OUTPUT -d $ip6Compa,$ip6Localhost -p icmpv6 -m conntrack --ctstate NEW -j ACCEPT

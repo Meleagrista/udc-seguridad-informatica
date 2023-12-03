@@ -243,6 +243,11 @@ Le paso la `vpn_key.key` a mi compañero y hace exactamente lo mismo haciendo lo
 
 _En este punto, cada máquina virtual será servidor y cliente de diversos servicios (NTP, syslog, ssh, web, etc.). Configure un “firewall stateful” de máquina adecuado a la situación actual de su máquina._
 
+
+Para eso creamos tres scripts:
+
+**setFirewallRules.sh**:
+
 ```bash
 #!/bin/sh
 
@@ -338,6 +343,45 @@ ip6tables -A INPUT -p icmpv6 -j REJECT --reject-with icmp6-port-unreachable
 
 
 ```
+
+**resetFirewall.sh**:
+
+```shell
+#!/bin/bash
+
+# Reset to avoid losing connections
+iptables -P INPUT ACCEPT
+iptables -P OUTPUT ACCEPT
+iptables -P FORWARD ACCEPT
+iptables -F
+iptables -X
+iptables -t nat -F
+# --------------------------
+ip6tables -P INPUT ACCEPT
+ip6tables -P OUTPUT ACCEPT
+ip6tables -P FORWARD ACCEPT
+ip6tables -F
+ip6tables -X
+ip6tables -t nat -F
+
+# Write reset log:
+/bin/echo "$(date): firewall reset" >> /var/log/fw_reset.log
+
+
+#CUIDADO, SI FALLA EL SCRIPT DE REINICIO NOS QUEDAMOS SIN MAQUINA
+```
+
+**testFirewall.sh**:
+
+```shell
+shutdown -r +10
+./setFirewallRules.sh
+echo "En 5 min el firewall se reniciara, no cierre este proceso"
+sleep 300 && ./resetFirewall.sh
+echo "Firewall reseteado"
+```
+
+Guardamos estos scripts en una misma carpeta y ejecutamos testFirewall.sh para probar.
 
 # Apartado 7 - Lynis
 

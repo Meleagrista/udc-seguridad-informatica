@@ -268,19 +268,17 @@ Para eso creamos tres scripts:
 ```bash
 #!/bin/sh
 
-#!/bin/sh
-
 ipCompa=10.11.49.54
 ip6Compa=2002:a0b:3137::1
 ipCompaVPN=172.160.0.2
-ipVPN=172.160.0.1/21
+ipVPN=172.160.0.1
 ipVPN_1=10.20.32.0/21 # EDUROAM
 ipVPN_2=10.30.8.0/21 # VPN FIC
 servidorDNS1=10.8.12.49
 servidorDNS2=10.8.12.50
 servidorDNS3=10.8.12.47
-debianRep1=151.101.194.132
-debianRep2=151.101.130.132
+#debianRep1=151.101.194.132
+#debianRep2=151.101.130.132 #no los usamos, puedes conectarte a cualquier http
 ipLocalhost=127.0.0.1
 ip6Localhost=::1
 
@@ -312,12 +310,17 @@ ip6tables -A INPUT -i lo -j ACCEPT
 ip6tables -A OUTPUT -o lo -j ACCEPT
 
 # Tunneled IPv6 - IPv4
-iptables -A INPUT -s $ipCompa -p ipv6 -j ACCEPT
-iptables -A OUTPUT -d $ipCompa -p ipv6 -j ACCEPT
+
+#iptables -A INPUT -s $ipCompa -p ipv6 -j ACCEPT
+#iptables -A OUTPUT -d $ipCompa -p ipv6 -j ACCEPT  #ESTO NO NOS PERMITE PING CON OTROS!
+
+
+iptables -A INPUT -p ipv6 -j ACCEPT
+iptables -A OUTPUT -p ipv6 -j ACCEPT
 
 # SSH
-iptables -A INPUT -s $ipVPN_1,$ipVPN_2,$ipCompa,$ipVPN -p TCP --dport 22 -m conntrack --ctstate NEW -j ACCEPT
-iptables -A OUTPUT -d $ipCompa,$ipVPN -p TCP --dport 22 -m conntrack --ctstate NEW -j ACCEPT
+iptables -A INPUT -s $ipVPN_1,$ipVPN_2,$ipCompa,$ipVPN,$ipCompaVPN -p TCP --dport 22 -m conntrack --ctstate NEW -j ACCEPT
+iptables -A OUTPUT -d $ipCompa,$ipCompaVPN,$ipVPN -p TCP --dport 22 -m conntrack --ctstate NEW -j ACCEPT
 # ------------------------------------------------------------------------------------------------------
 ip6tables -A INPUT -s $ip6Compa -p tcp --dport 22 -m conntrack --ctstate NEW -j ACCEPT
 ip6tables -A OUTPUT -d $ip6Compa -p tcp --dport 22 -m conntrack --ctstate NEW -j ACCEPT
@@ -336,19 +339,19 @@ iptables -A OUTPUT -d $ipCompa -p UDP --sport 5555 -m conntrack --ctstate NEW -j
 iptables -A OUTPUT -d $ipCompa,$ipLocalhost -p UDP --dport 123 -m conntrack --ctstate NEW -j ACCEPT
 
 # HTTP
-iptables -A INPUT -s $ipCompa -p TCP --dport 80 -m conntrack --ctstate NEW -j ACCEPT
-iptables -A OUTPUT -d $ipCompa,$debianRep1,$debianRep2 -p TCP --dport 80 -m conntrack --ctstate NEW -j ACCEPT
+iptables -A INPUT -s $ipVPN,$ipCompaVPN,$ipCompa -p TCP --dport 80 -m conntrack --ctstate NEW -j ACCEPT
+iptables -A OUTPUT -p TCP --dport 80 -m conntrack --ctstate NEW -j ACCEPT
 
 # HTTPS
-iptables -A INPUT -s $ipCompa -p TCP --dport 443 -m conntrack --ctstate NEW -j ACCEPT
-iptables -A OUTPUT -d $ipCompa -p TCP --dport 443 -m conntrack --ctstate NEW -j ACCEPT
+iptables -A INPUT -s $ipVPN,$ipCompaVPN,$ipCompa -p TCP --dport 443 -m conntrack --ctstate NEW -j ACCEPT
+iptables -A OUTPUT -p TCP --dport 443 -m conntrack --ctstate NEW -j ACCEPT
 
 # ICMP
-iptables -A INPUT -s $ipCompa,$ipCompaVPN,$ipLocalhost,$ipVPN -p ICMP -m conntrack --ctstate NEW -j ACCEPT
-iptables -A OUTPUT -d $ipCompa,$ipCompaVPN,$ipLocalhost,$ipVPN -p ICMP -m conntrack --ctstate NEW -j ACCEPT
+iptables -A INPUT -p ICMP -m conntrack --ctstate NEW -j ACCEPT
+iptables -A OUTPUT -p ICMP -m conntrack --ctstate NEW -j ACCEPT
 # ----------------------------------------------------------------------------------------------------
-ip6tables -A INPUT -s $ip6Compa,$ip6Localhost -p icmpv6 -m conntrack --ctstate NEW -j ACCEPT
-ip6tables -A OUTPUT -d $ip6Compa,$ip6Localhost -p icmpv6 -m conntrack --ctstate NEW -j ACCEPT
+ip6tables -A INPUT -p icmpv6 -m conntrack --ctstate NEW -j ACCEPT
+ip6tables -A OUTPUT -p icmpv6 -m conntrack --ctstate NEW -j ACCEPT
 
 
 # Rejects
@@ -359,8 +362,6 @@ iptables -A INPUT -p ICMP -j REJECT --reject-with icmp-port-unreachable
 ip6tables -A INPUT -p udp -j REJECT --reject-with icmp6-port-unreachable
 ip6tables -A INPUT -p tcp -j REJECT --reject-with tcp-reset
 ip6tables -A INPUT -p icmpv6 -j REJECT --reject-with icmp6-port-unreachable
-
-
 
 ```
 
@@ -387,8 +388,6 @@ ip6tables -t nat -F
 # Write reset log:
 /bin/echo "$(date): firewall reset" >> /var/log/fw_reset.log
 
-
-#CUIDADO, SI FALLA EL SCRIPT DE REINICIO NOS QUEDAMOS SIN MAQUINA
 ```
 
 **testFirewall.sh**:

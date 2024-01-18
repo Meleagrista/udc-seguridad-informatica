@@ -1,5 +1,12 @@
-# notebook-seguridad-informatica
+# udc-seguridad-informatica
 Este repositorio es un espacio dedicado a la recopilación y gestión de archivos y recursos relacionados con mi asignatura de Legislación y Seguridad Informática.
+
+# Resultados
+Estas son las notas de cada practica:
+1. `practica-1`: 2/4
+- Tuvimos que ir al segundo intento.
+2. `practica-2`: 3/4
+3. `practica-3`: 3/4
 
 # Organización
 Cada práctica constará de varios archivos:

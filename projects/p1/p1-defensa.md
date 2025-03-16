@@ -1,9 +1,18 @@
 # PRÁCTICA 1 - CONFIGURACIÓN BÁSICA: PRIMERA PARTE
+
+<a id="top"></a>
+<!-- <p align="right"><a href="#top">back to top</a></p> -->
+
 ## Apartado A
+
 Configure su máquina virtual de laboratorio con los datos proporcionados por el profesor. Analice los ficheros básicos de configuración (interfaces, hosts, resolv.conf, nsswitch.conf, sources.list, etc.)
+
 1. Modificar el fichero `/etc/network/interfaces`:
+
+> [!Note]
 > Mis IPs son `10.11.49.54` y `10.11.51.54`. La configuración de este fichero dependerá de tus IPs.
-```
+
+```bash
 # This file describes the network interfaces available on your system
 # and how to activate them. For more information, see interfaces(5).
 #source /etc/network/interfaces.d/*
@@ -21,12 +30,16 @@ iface ens34 inet static
 #       network 10.11.50.0
 #       netmask 255.255.254.0
 ```
+
+> [!Note]
 > La red es la `10.11.48.0/23` esto quiere decir todo el segmento comienza en `10.11.48.0` y finaliza en `10.11.49.255`.
 
+> [!Warning]
 > No confundir la dirección de broadcast con la ip address de ens34.
-`/etc/hosts`:
 
-```
+### `/etc/hosts`
+
+```bash
 127.0.0.1	localhost
 10.11.49.54	debian
 
@@ -36,9 +49,9 @@ ff02::1 ip6-allnodes
 ff02::2 ip6-allrouters
 ```
 
-`/etc/resolv.conf`:
+### `/etc/resolv.conf`
 
-```
+```bash
 domain udc.pri
 search udc.pri
 nameserver 10.8.12.49
@@ -46,9 +59,9 @@ nameserver 10.8.12.50
 nameserver 10.8.12.47
 ```
 
-`/etc/nsswitch.conf`:
+### `/etc/nsswitch.conf`
 
-```
+```bash
 # /etc/nsswitch.conf
 #
 # Example configuration of GNU Name Service Switch functionality.
@@ -71,9 +84,9 @@ rpc:            db files
 netgroup:       nis
 ```
 
-`/etc/apt/sources.list`:
+### `/etc/apt/sources.list`
 
-```
+```bash
 deb http://deb.debian.org/debian/ buster main
 deb-src http://deb.debian.org/debian/ buster main
 
@@ -83,11 +96,15 @@ deb-src https://deb.debian.org/debian-security buster-security main contrib
 deb http://security.debian.org/debian-security buster/updates main
 deb-src http://security.debian.org/debian-security buster/updates main
 ```
+
+<p align="right"><a href="#top">back to top</a></p>
+
 ## Apartado B
 ¿Qué distro y versión tiene la máquina inicialmente entregada?. Actualice su máquina a la última versión estable disponible.
 
 Mostramos la distro actual y su versión con `lsb_release -a`.
-```
+
+```bash
 root@debian:/home/lsi# lsb_release -a
 No LSB modules are available.
 Distributor ID:	Debian
@@ -101,11 +118,15 @@ Podemos mostrar nuestra versión ejecutando `cat /etc/debian_version`.
 
 Para actualizar desde el usuario root:
 
-1. `apt update -y && sudo apt upgrade -y`
-> La opción -y se usa para aceptar todos los prompts.
+1. ```apt update -y && sudo apt upgrade -y``` 
+
+>[!Note]
+> La opción `-y` se usa para aceptar todos los prompts.
+
 2. `apt dist-upgrade`
 3. Reemplazar la lista de fuentes `/etc/apt/sources.list` con:
-```
+
+```bash
 deb http://deb.debian.org/debian/ bullseye main
 deb-src http://deb.debian.org/debian/ bullseye main
 
@@ -115,13 +136,17 @@ deb-src https://deb.debian.org/debian-security bullseye-security main contrib
 # deb http://deb.debian.org/debian/ bullseye-updates main contrib
 # deb-src http://deb.debian.org/debian/ bullseye-updates main contrib
 ```
+
+>[!Warning]
 > Mi instalación dio problemas por culpa de `bullseye-updates`, el profesor me recomendó comentarlo porque no es esencial.
+
 4. `apt update`
 5. `apt upgrade --without-new-pkgs`
 6. `apt full-upgrade`
 7. `reboot`
 8. Comprobamos que la máquina se actualizó correctamente:
-```
+
+```bash
 lsi@debian:~$ lsb_release -a
 No LSB modules are available.
 Distributor ID: Debian
@@ -129,17 +154,27 @@ Description: Debian GNU/Linux 11 (bullseye)
 Release: 11
 Codename: bullseye
 ```
+
 9. Repetimos el proceso para actualizarlo a la ultima versión disponible, en caso de duda consultamos [esta pagina](https://www.debian.org/releases/stable/i386/release-notes/ch-upgrading.es.html#backup).
+
+<p align="right"><a href="#top">back to top</a></p>
 
 ## Apartado C
 Identifique la secuencia completa de arranque de una máquina basada en la distribución de referencia (desde la pulsación del botón de arranque hasta la pantalla de login). ¿Qué target por defecto tiene su máquina? ¿Cómo podría cambiar el target de arranque? ¿Qué targets tiene su sistema y en qué estado se encuentran? ¿Y los services? Obtenga la relación de servicios de su sistema y su estado. ¿Qué otro tipo de unidades existen?
 
+> [!Tip]
+> Multiuser-target
+
 1. Ver el target predeterminado con `systemctl get-default`.
 2. Ver la lista de dependencias del target actual con `systemctl list-dependencies default.target`.
+
+> [!Note]
 > El target por defecto es `graphical.target`.
+
 3. Cambiar el target por defecto con `systemctl set-default <TARGET>`.
-4. Ver targets del sistema y su estado con `systemctl list-unit-files --type=target`
-```
+4. Ver targets del sistema y su estado con `systemctl list-unit-files --type=target`.
+
+```bash
 root@debian:/home/lsi# systemctl list-unit-files --type=target
 UNIT FILE                     STATE    VENDOR PRESET
 basic.target                  static   -
@@ -154,7 +189,8 @@ usb-gadget.target             static   -
 67 unit files listed.
 ```
 5. Ver servicios con `systemctl list-unit-files --type=service`
-```
+
+```bash
 root@debian:/home/lsi# systemctl list-unit-files --type=service
 UNIT FILE                              STATE           VENDOR PRESET
 accounts-daemon.service                masked          enabled
@@ -178,8 +214,9 @@ x11-common.service                     masked          enabled
 
 173 unit files listed.
 ```
-7. Ver otro tipo de unidades con `systemctl list-units -t help`
-```
+7. Ver otro tipo de unidades con `systemctl list-units -t help`.
+
+```bash
 root@debian:/home/lsi# systemctl list-units -t help
 Available unit types:
 service
@@ -194,17 +231,26 @@ path
 slice
 scope
 ```
+
+<p align="right"><a href="#top">back to top</a></p>
+
 ## Apartado D
 Determine los tiempos aproximados de botado de su _kernel_ y del _userspace_. Obtenga la relación de los tiempos de ejecución de los services de su sistema.
+
 1. Ver tiempos aproximados de botado de kernel y userspace con `systemd-analyze`.
-```
+
+```bash
 lsi@debian:~$ systemd-analyze
 Startup finished in 3.557s (kernel) + 1min 31.686s (userspace) = 1min 35.244s
 multi-user.target reached after 1min 31.646s in userspace.
 ```
+
+> [!Warning]
 > Algunos servicios me dan error, por eso el tiempo de carga tan lento.
+
 2. Ver relación de tiempos de ejecución y services con `systemd-analyze blame`.
-```
+
+```bash
 lsi@debian:~$ systemd-analyze blame
 13.800s apparmor.service
  5.416s e2scrub_reap.service
@@ -248,8 +294,10 @@ lsi@debian:~$ systemd-analyze blame
   122ms sys-kernel-debug.mount
   121ms sys-kernel-tracing.mount
 ```
+
 3. Ver cadena de ejcución de servicios en el mometo de inicio con `systemd-analyze critical-chain`.
-```
+
+```bash
 lsi@debian:~$ systemd-analyze critical-chain
 The time when unit became active or started is printed after the "@" character.
 The time the unit took to start is printed after the "+" character.
@@ -272,19 +320,30 @@ multi-user.target @1min 31.646s
                             └─-.mount @1.557s
                               └─-.slice @1.557s
 ``` 
+
+<p align="right"><a href="#top">back to top</a></p>
+
 ## Apartado E
 Investigue si alguno de los servicios del sistema falla. Pruebe algunas de las opciones del sistema de registro journald. Obtenga toda la información journald referente al proceso de botado de la máquina. ¿Qué hace el `systemd-timesyncd`?
+
 1. Comprobar si algún servicio ha fallado con `systemctl list-unit-files --type=service --failed`.
 2. Ver el log de un servicio con `journalctl -u <SERVICE>`.
+
+> [!Note]
 > Solo se puede activar con permisos de adminitrador.
+
 3. Ver el log del boot actual con `journalctl -b`.
 
 `systemd-timesyncd` es un servicio que facilita la sincronización del reloj del sistema con servidores NTP externos de manera automática y eficiente. Cuando este servicio está habilitado y en funcionamiento, se encarga de solicitar información de tiempo a servidores NTP remotos y ajustar el reloj local del sistema en consecuencia.
 
+<p align="right"><a href="#top">back to top</a></p>
+
 ## Apartado F
 Identifique y cambie los principales parámetros de su segundo interface de red (ens34). Configure un segundo interface lógico. Al terminar, déjelo como estaba.
+
 1. Ver estado inicial de `ens34`  con `ifconfig ens34`:
-```
+
+```bash
 lsi@debian:~$ ifconfig ens34
 ens34: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
         inet 10.11.51.54  netmask 255.255.254.0  broadcast 10.11.51.255
@@ -296,32 +355,44 @@ ens34: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
         device interrupt 16  base 0x2080
 ```
+
 2. Configue la intrfacez de red `ens34`:
-```
+
+```bash
 root@debian:/home/lsi# ifconfig ens34 down
 root@debian:/home/lsi# ifconfig ens34 mtu 1200
 root@debian:/home/lsi# ifconfig ens34 hw ether 00:1e:2e:b5:18:07
 root@debian:/home/lsi# ifconfig ens34 10.11.50.51 netmask 255.255.254.0
 root@debian:/home/lsi# ifconfig ens34 up
 ```
+
 3. Configuración de una nueva interfaz lógica:
-```
+
+```bash
 root@debian:/home/lsi# ifconfig ens34:1 192.168.1.1 netmask 255.255.255.0
 root@debian:/home/lsi# ifconfig ens34:1 up
 ```
+
+> [!Note]
 > Para persistir los cambios debemos hacerlos en `/etc/network/interfaces`, si no un `reboot` debería reestablecer los cambios.
 
 ## Apartado G
 ¿Qué rutas (routing) están definidas en su sistema?. Incluya una nueva ruta estática a una determinada red.
+
+> [!Tip]
+> `sudo ip route add 10.11.55.0/24 via 10.11.48.1`
+
 1. Mostrar rutas establecidas en el sistema con `ip route show` y `route`:
-```
+
+```bash
 lsi@debian:~$ ip route show
 default via 10.11.48.1 dev ens33 onlink
 10.11.48.0/23 dev ens33 proto kernel scope link src 10.11.49.54
 10.11.50.0/23 dev ens34 proto kernel scope link src 10.11.51.54
 169.254.0.0/16 dev ens33 scope link metric 1000
 ```
-```
+
+```bash
 lsi@debian:~$ route
 Kernel IP routing table
 Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
@@ -330,8 +401,13 @@ default         10.11.48.1      0.0.0.0         UG    0      0        0 ens33
 10.11.50.0      0.0.0.0         255.255.254.0   U     0      0        0 ens34
 link-local      0.0.0.0         255.255.0.0     U     1000   0        0 ens33
 ```
+
+> [!Note]
 > `_gateway` en mi consola se muestra como la ip `10.11.48.1`.
+
 2. Añadir una nueva ruta con `ip route add 10.11.53.0/24 via 10.11.48.1`.
+
+<p align="right"><a href="#top">back to top</a></p>
 
 ## Apartado H
 En el apartado d) se ha familiarizado con los services que corren en su sistema. ¿Son necesarios todos ellos?. Si identifica servicios no necesarios, proceda adecuadamente. Una limpieza no le vendrá mal a su equipo, tanto desde el punto de vista de la seguridad, como del rendimiento.
@@ -350,13 +426,33 @@ En el apartado d) se ha familiarizado con los services que corren en su sistema.
 - `systemctl mask usb_modeswitch`
 - `systemctl mask usbmuxd`
 
+> [!Tip]
+> - `cups.service` 
+> - `ipp algo.service`
+> - `cups-browser.service`
+> - `netwrokmanager.service`
+> - `apparmor.service`
+> - `avahi-daemon.service`
+
+> [!Tip]
+> **Optimización del arranque**: Se usó un shell más rápido y `kexec` para reinicios más eficientes, basados en [esta página](https://wiki.debian.org/BootProcessSpeedup)
+
+> [!Tip]
+> **Aplicaciones eliminadas**: Se desinstalaron `PulseAudio` y `PipeWire`. También se borraron archivos `.desktop` problemáticos.
+
+> [!Tip]
+> **Modificación de GRUB**: Se ajustó el tiempo de espera (`timeout=0`), aunque no está claro si tuvo efecto.
+
 Antes de borrar ningún servicio es recomendable ver si este posee alguna dependencia que puedo afectar a la maquina con `systemctl list-dependencies <SERVICIO> [--all] [--reverse]`.
+
+<p align="right"><a href="#top">back to top</a></p>
 
 ## Apartado I
 Diseñe y configure un pequeño “script” y defina la correspondiente unidad de tipo service para que se ejecute en el proceso de botado de su máquina.
 
 1. He creado el script `/usr/local/bin/notify` que se conecta con un bot de Telegram:
-```
+
+```bash
 #!/bin/bash
 API_KEY=XXXXXXXXXXXX
 CHAT_ID=XXXXXXXXXXXX
@@ -367,8 +463,10 @@ MESSAGE=${MESSAGE:-"Vaya, no hay mensaje."}
 
 wget -qO- "https://api.telegram.org/bot$API_KEY/sendMessage?chat_id=$CHAT_ID&text=$MESSAGE" &> /dev/null
 ```
+
 2. Y un servicio `/etc/systemd/system/notify-boot.service` que me avisa de que la máquina ha sido encendida:
-```
+
+```bash
 [Unit]
 Description=Custom service that notifies through Telegram on startup.
 After=network.target
@@ -383,43 +481,92 @@ ExecStart=notify --boot
 [Install]
 WantedBy=multi-user.target
 ```
+
 3. Y se activa con el comando `systemctl enable notify-boot.service`.
 
-## Apartado J - Pending...
+<p align="right"><a href="#top">back to top</a></p>
+
+## Apartado J (no revised)
 Identifique las conexiones de red abiertas a y desde su equipo.
 - Para leer las conexiones abiertas se ejecuta el comando `netstat -netua`.
 
-## Apartado K - Pending...
+> [!Tip]
+> `netstat -tuln`
+
+<p align="right"><a href="#top">back to top</a></p>
+
+## Apartado K (no revised)
 Nuestro sistema es el encargado de gestionar la CPU, memoria, red, etc., como soporte a los datos y procesos. Monitorice en “tiempo real” la información relevante de los procesos del sistema y los recursos consumidos. Monitorice en “tiempo real” las conexiones de su sistema.
+
+> [!Tip]
+> - `top`: El comando `top` muestra una lista de los procesos en ejecución en tu sistema, ordenados por uso de CPU por defecto. También muestra información sobre la memoria y otros recursos utilizados. Para ejecutar `top` en tiempo real, simplemente > ejecuta `top` en una terminal.
+> - `free`: El comando `free` muestra información sobre la memoria utilizada y libre en tu sistema, incluyendo RAM y memoria de intercambio (swap).
+> - `df`: `df` muestra información sobre el espacio en disco utilizado y disponible en todas las particiones de almacenamiento de tu sistema.
+> - `netstat`: El comando `netstat` muestra información sobre las conexiones de red y las estadísticas de red. Puedes utilizar `netstat -tuln` para mostrar las conexiones TCP y UDP que están abiertas y escuchando.  
+> - `ss`: `ss` es una alternativa moderna a `netstat` y proporciona información más detallada sobre las conexiones de red y los sockets.
+> - `iftop`: `iftop` muestra una lista en tiempo real de las conexiones de red y el uso de ancho de banda por interfaz de red.
 
 1. Procesos del sistema en *tiempo real*: `top`
 2. Conexiones del sistema en *tiempo real*: `netstat -netuac`
 
-## Apartado L - Pending...
-Un primer nivel de filtrado de servicios los constituyen los tcp-wrappers. Configure el tcp-
-wrapper de su sistema (basado en los ficheros hosts.allow y hosts.deny) para permitir
-conexiones SSH a un determinado conjunto de IPs y denegar al resto. ¿Qué política general de
-filtrado ha aplicado?. ¿Es lo mismo el tcp-wrapper que un firewall?. Procure en este proceso no
-perder conectividad con su máquina. No se olvide que trabaja contra ella en remoto por ssh.
+<p align="right"><a href="#top">back to top</a></p>
+
+## Apartado L (no revised)
+Un primer nivel de filtrado de servicios los constituyen los tcp-wrappers. Configure el tcp-wrapper de su sistema (basado en los ficheros `hosts.allow` y `hosts.deny`) para permitir conexiones SSH a un determinado conjunto de IPs y denegar al resto. ¿Qué política general de filtrado ha aplicado?. ¿Es lo mismo el tcp-wrapper que un firewall? Procure en este proceso no perder conectividad con su máquina. No se olvide que trabaja contra ella en remoto por ssh.
+
+> [!Tip]
+> **Bloqueo de TCP Wrappers**: Se configuraron reglas en `hosts.allow` y `hosts.deny`, donde `hosts.allow` se evalúa primero.
+
+> [!Tip]
+> **Twist & Spawn**: Se usaron para personalizar respuestas y ejecutar acciones al detectar conexiones bloqueadas.
+
+> [!Tip]
+> **Registro de bloqueos**: Se configuró un archivo para guardar intentos de acceso denegados.
+
+> [!Tip]
+> **Conexiones monitoreadas**: Se identificaron tres tipos clave:
+> - **Puerta trasera**.
+> - **Interfaz `ens33` del compañero**.
+> - **VPN**, con filtrado por rango de IP.
 
 1. `/etc/hosts.allow`: El sistema comprueba primero este archivo para las conexiones tcp.
 2. `/etc/hosts.deny`: Si la IP desde la que se están intentando conectar a nuestra máquina no coincide con ninguna en `/etc/hosts.allow`, se comprueba si está denegada aquí.
 
+<p align="right"><a href="#top">back to top</a></p>
+
 ## Apartado M
 Existen múltiples paquetes para la gestión de logs (syslog, syslog-ng, rsyslog). Utilizando el rsyslog pruebe su sistema de log local.
-```
+
+> [!Tip]
+> **Envío de logs con Rsyslog**: Se configuró para enviar logs a los compañeros sin mezclar registros.
+
+> [!Tip]
+> **Pila de logs**: Se almacenan temporalmente los logs cuando el equipo del compañero está apagado y se envían automáticamente al encenderse.
+
+```bash
 lsi@debian:~$ logger "logger de util-linux 2.38.1"
 root@debian:/home/lsi# tail -2 /var/log/syslog
 2023-10-02 T18:12:22.339138+02:00 debian systemd-timesyncd[571]: Timed out waiting for reply from 178.215.228.24:123 (3.debian.pool.ntp.org).
 2023-10-02 T18:15:40.957900+02:00 debian lsi: logger de util-linux 2.38.1
 ```
+
+> [!Note]
 > `tail -2` devuelve las dos últimas líneas de un fichero.
+
+<p align="right"><a href="#top">back to top</a></p>
 
 ## Apatado N
 Configure IPv6 6to4 y pruebe ping6 y ssh sobre dicho protocolo. ¿Qué hace su tcp-wrapper en las conexiones ssh en IPv6? Modifique su tcp-wapper siguiendo el criterio del apartado h). ¿Necesita IPv6?. ¿Cómo se deshabilita IPv6 en su equipo?
 
+> [!Tip]
+> **Activación y configuración de IPv6**: Se habilitó IPv6 con 6to4, generando la dirección a partir de la IPv4 y configurándola en el archivo de interfaces. Conectividad verificada con `ping6` y `ssh -6`.
+
+> [!Tip]
+> **Seguridad aplicada**: Se implementaron reglas de firewall y restricciones para proteger el tráfico IPv6.
+
 1. Añadir a `/etc/network/interfaces` la configuración de la nueva interfaz:
-```
+
+```bash
 auto 6to4
 iface 6to4 inet6 v4tunnel
 	pre-up modprobe ipv6
@@ -429,30 +576,49 @@ iface 6to4 inet6 v4tunnel
 	endpoint any
 	local 10.11.48.54
 ```
+
 2. Activar la interfaz con `ifup 6to4`.
 3. Probamos a hacer un `ping6`.
 4. Añadimos a `/etc/hosts.allow`:
-```
+
+```bash
 sshd: [2002:a0b:3136::1]/48, [2002:a0b:3137::1]/48
 ```
+
+> [!Note]
 > Añadimos nuestra ip propia y la de nuestro compañero.
+
 5. Probamos a hacer un `ssh`.
+
+> [!Note]
 > No es necesario en nuestra red interna el uso de IPv6 gracias a nuestra interfaz 6to4.
+
 - Se dehabilita añadiendo estas líneas en el fichero `/etc/sysctl.conf`:
-```
+
+```bash
 net.ipv6.conf.all.disable_ipv6 = 1
 net.ipv6.conf.default.disable_ipv6 = 1
 net.ipv6.conf.lo.disable_ipv6 = 1
 ```
 6. Aplicar los cambios con `sysctl -p`.
 
+<p align="right"><a href="#top">back to top</a></p>
+
 # PRÁCTICA 1 - CONFIGURACIÓN BÁSICA: SEGUNDA PARTE
+
+<a id="mid"></a>
+
 ## APARTADO A
+
 En colaboración con otro alumno de prácticas, configure un servidor y un cliente NTP.
+
+> [!Note]
 > Para la demostración usamos 10.11.49.54 como servidor y 10.11.49.55 como cliente.
+
 ### Maquina del servidor
 1. Configurar el fichero `/etc/ntpsec/ntp.conf` con las siguiente lineas:
-```
+
+```bash
 # pool.ntp.org maps to about 1000 low-stratum NTP servers.  Your server will
 # pick a different set every time it starts up.  Please consider joining the
 # pool: <http://www.pool.ntp.org/join.html>
@@ -478,15 +644,19 @@ restrict default kod nomodify nopeer noquery limited
 restrict 127.0.0.1
 restrict ::1
 ```
+
+> [!Warning]
 > La configuración de otros años fue la siguiente, pero el resto de la configuración está obsoleta.
-```
+
+```bash
 # Configuración servidor
 server 127.127.1.0 minpoll 4
 fudge 127.127.1.0 stratum 0
 ```
 ### Maquina del cliente
 1. Configurar el fichero `/etc/ntpsec/ntp.conf` con las siguiente lineas:
-```
+
+```bash
 # pool.ntp.org maps to about 1000 low-stratum NTP servers.  Your server will
 # pick a different set every time it starts up.  Please consider joining the
 # pool: <http://www.pool.ntp.org/join.html>
@@ -512,8 +682,11 @@ restrict default kod nomodify nopeer noquery limited
 restrict 127.0.0.1
 restrict ::1
 ```
+
+> [!Warning]
 > La configuración de otros años fue la siguiente, pero el resto de la configuración está obsoleta.
-```
+
+```bash
 ### Configuración cliente
 server 10.11.49.106 minpoll 4
 fudge 127.127.1.0 stratum 1
@@ -524,33 +697,46 @@ fudge 127.127.1.0 stratum 1
 El comando nos indicará el estado de tanto cliente como servidor:
 - Para confirmar su correcto funcionamiento debemos comprobar que el mensaje la columna `redif` es `LOCAL(0)` en vez de `.INIT.`.
 - Después para comprobar si las maquinas pueden conectarse de forma segura debemos comprobar que la columna `reach` es 377.
-```
+
+```bash
 lyra@ws07475:~$ ntpq -p
      remote           refid      st t when poll reach   delay   offset  jitter
 ==============================================================================
  europium.canoni .INIT.          16 u    - 1024    0    0.000    0.000   0.000
 ```
-> Sometimes internet routers have problems passing through NTP traffic. The reason is that UDP is a bit more trickier to forward than
-TCP and sometimes the port is even used on the device itself for an NTP daemon.
+
+> [!Note]
+> Sometimes internet routers have problems passing through NTP traffic. The reason is that UDP is a bit more trickier to forward than TCP and sometimes the port is even used on the device itself for an NTP daemon.
 
 Toda la información sobre le output del comando se encuentra en [esta pagina](https://paulroberts69.wordpress.com/2022/08/02/interpreting-ntpq-output/).
+
 5. Para realizar la comprobación podemos hacer lo siguiente:
-```
+
+```bash
 root@debian:~# date +%T -s 1
 01:00:00
 root@debian:~# ntpdate 10.11.49.106
 28 Sep 23:43:46 ntpdate[1017]: step time server 10.11.49.106 offset +81815.937779 sec
 ```
+
+> [!Note]
 > Cambiar la hora en la maquina cliente y luego pedir una actualización al servidor.
 
 Para la comprobación es necesario instalar con `apt install` el paquete `nptdate`.
 
+<p align="right"><a href="#mid">back to top</a></p>
+
 ## Apartado B
+
 Cruzando los dos equipos anteriores, configure con rsyslog un servidor y un cliente de logs.
-> Para la demostración usamos 10.11.49.54 como servidor y 10.11.49.55 como cliente.
+
+> [!Note]
+> Para la demostración usamos `10.11.49.54` como servidor y `10.11.49.55` como cliente.
+
 ### Maquina del servidor
 1. Configurar el fichero `/etc/rsyslog.conf` con las siguiente lineas:
-```
+
+```bash
 #################
 #### MODULES ####
 #################
@@ -580,10 +766,14 @@ $template remote, "/var/log/%fromhost-ip%/%programname%.log"
 *.* ?remote
 & stop
 ```
+
+> [!Note]
 > Descomentar los modulos que se quieran utilizar para la conexión.
+
 ### Maquina del cliente
 1. Configurar el fichero `/etc/rsyslog.conf` con las siguiente lineas:
-```
+
+```bash
 *.* action(
        type="omfwd" 
        target="10.11.49.54" 
@@ -595,16 +785,20 @@ $template remote, "/var/log/%fromhost-ip%/%programname%.log"
        queue.saveOnShutdown="on"
 )
 ```
+
 2. Para actualizar cambios en `rsyslog.conf` utilizar `systemctl restart rsyslog.service`.
 - Para probar si funciona podemos hacer lo siguiente:
 1. Ejecutar `root@debian:/home/lsi# logger "Hello world"` en el cliente.
 2. Ejecutar `root@debian:~# cat /var/log/10.11.49.55/lsi.log` en el servidor.
 3. En el servidor, abrir el archivo `/etc/rsyslog.conf y comentar la siguiente línea en el servidor:
-```
+
+```bash
 # Provides TCP syslog reception
 module(load="imtcp")
 #input(type="imtcp" port="514")
 ```
+
+> [!Note]
 > Esto para que deje de escucharse en el puerto 514/TCP.
 
 4. Tras esto, ejecutar `systemctl restart rsyslog` en el servidor.
@@ -612,6 +806,8 @@ module(load="imtcp")
 6. Comprobar que no se ha guardado el mensaje generado con `tail /var/log/10.11.49.55/lsi.log` en el servidor.
 7. Descomentar la línea comentada en el paso `3` y volver a hacer el paso `4`.
 8. Tras unos segundos, volver a hacer `tail /var/log/10.11.49.55/lsi.log` en el servidor.
+
+<p align="right"><a href="#mid">back to top</a></p>
 
 ## APARTADO C
 Haga todo tipo de propuestas sobre los siguientes aspectos: ¿Qué problemas de seguridad identifica en los dos apartados anteriores? ¿Cómo podría solucionar los problemas identificados?
@@ -677,6 +873,8 @@ Additionally, NTP is vulnerable to MitM attacks. These attacks allow unauthorize
      - Implement network segmentation to isolate NTP servers from critical infrastructure.
      - Monitor NTP traffic and logs for suspicious activity.
 
+<p align="right"><a href="#mid">back to top</a></p>
+
 # APARTADO D
 En la plataforma de virtualización corren, entre otrs equipos, más de 200 máquinas virtuales para LSI. Como los recursos son limitados, y el disco duro también, identifique todas aquellas acciones que pueda hacer para reducir el espacio de disco ocupado.
 
@@ -690,17 +888,24 @@ En la plataforma de virtualización corren, entre otrs equipos, más de 200 máq
 También se puede borrar imágenes kernel antiguas:
 1. `uname -r`: Muestra kernel actual.
 2. `dpkg --list | grep linux-image`: Muestra los kernels que tenemos en el sistema.
-```console
+
+```bash
 	root@debian:/home/lsi# dpkg --list | grep linux-image
 	ii  linux-image-5.10.0-18-amd64           5.10.140-1                       amd64        Linux 5.10 for 64-bit PCs (signed)
 	ii  linux-image-amd64                     5.10.140-1                       amd64        Linux for 64-bit PCs (meta-package)
 ```
+
 3. `apt-get --purge remove linux-image-4...`: Elimina un kernel en específico.
    
 Lo ideal es dejar solo las imagenes mas actuales.
 
+<p align="right"><a href="#mid">back to top</a></p>
+
 ## APARTADO E
-### *Este apartado no está completo*
+
+> [!Caution]
+> **Este apartado no está completo.**
+
 Instale el SIEM Splunk en su máquina. Sobre dicha plataforma haga los siguientes puntos:
 1. Genere una query que visualice los logs internos del splunk.
 2. Cargue el fichero `/var/log/apache2/access.log` y el `journal` del sistema y visualicelos.
@@ -708,6 +913,9 @@ Instale el SIEM Splunk en su máquina. Sobre dicha plataforma haga los siguiente
 4. Trate de obtener el país y región origen de las IPs que se han conectado a su servidor web y y si es posible sus coordenadas geográficas.
 5. Obtenga los host origen, sources y sourcestypes.
 6. ¿Como podría hacer que splunk haga de servidor de log de su cliente?
+
+> [!Tip]
+> `export PATH=$PATH:/opt/splunk/bin`
 
 Como _Splunk_ está alojado dentro de una carpeta no accesible desde el _PATH_ lo mejor es usar la siguiente linea al comienzo de la sesion: `export PATH=$PATH/opt/splunk/bin`.
 
@@ -743,7 +951,8 @@ Localizaciones IP : source="/var/log/fake.log" host="debian" sourcetype="fake-au
 Splunk mostrará los resultados de la consulta en la parte inferior de la página. Puedes explorar los registros y los datos resultantes de acuerdo con tus necesidades.
 
 - Como debido al cambio de temario este apartado vino antes que la instalación de _Apache_ hemos generado y documento de logs falso con IPs de diferentes lugares:
-```
+
+```bash
 2023-10-01T10:00:55.571035+02:00 debian sshd[1001]: Failed password for user admin from 203.0.113.1 port 12345 ssh2
 2023-10-01T10:02:46.973354+02:00 debian sshd[1002]: Failed password for user root from 192.168.1.100 port 54321 ssh2
 2023-10-01T10:05:12.865123+02:00 debian sshd[1003]: Accepted publickey for user user1 from 103.45.67.89 port 23456 ssh2
@@ -793,3 +1002,5 @@ Splunk mostrará los resultados de la consulta en la parte inferior de la págin
 2023-10-16T02:52:45.998877+02:00 debian sshd[1047]: Failed password for user user9 from 247.248.249.250 port 2345 ssh2
 2023-10-16T02:55:10.667788+02:00 debian sshd[1048]: Failed password for user testuser from 251.252.253.254 port 3456 ssh2
 ```
+
+<p align="right"><a href="#mid">back to top</a></p>

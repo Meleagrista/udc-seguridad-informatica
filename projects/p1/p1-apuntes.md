@@ -71,7 +71,7 @@ El problema es que `dbus.service` lo trata de activar através de _socket_ enton
 > Parece que tras el borrado de GNOME ya no está presente este servicio.
 The `AccountService` project provides a set of D-Bus interfaces for querying and manipulating user account information and an implementation of these interfaces, based on the `useradd`, `usermod` and `userdel` commands, `accounts-daemon.service` is a potential security risk. It is part of `AccountsService`, which allows programs to get and manipulate user account information. I can't think of a good reason to allow this kind of behind-my-back operations, so I mask it.
 As a general rule, if something is DBus based (and accounts-daemon is), it's safe to turn off automatic startup of it, as it will just get started by DBus whenever something actually needs it.
-```
+```bash
 accounts-daemon.service
 ○ └─graphical.target
 ```
@@ -87,7 +87,7 @@ Permite detectar automáticamente los recursos de una red local y conectarse a e
 1. Asignar automáticamente una dirección IP incluso sin presencia de un servidor DHCP.
 2. Hacer la función de DNS (cada nodo es accesible como: nombre-nodo.local).
 3. Hacer una lista de los servicios y acceder a ellos fácilmente (las máquinas de la red local son informadas de la llegada o salida de un servicio).
-```
+```bash
 avahi-daemon.service
 ● ├─cups-browsed.service
 ● │ └─multi-user.target
@@ -112,7 +112,7 @@ The only time I have found `NetworkManager` useful was when I was using wireless
 ## `cups` - `disable`
 The Debian printing system has undergone many significant changes over the past few years, with much of the printer management taking advantage of the advances in modern printer technology and the proliferation of IPP printers.
 > No se añade el `.service`, el comando es `systemctl disable cups && systemctl mask cups`.
-```
+```bash
 cups.service
 ● ├─cups-browsed.service
 ● │ └─multi-user.target
@@ -126,7 +126,7 @@ A daemon for browsing the Bonjour broadcasts of shared, remote CUPS printers.
 
 ## `ModemManager` - `disable`
 ModemManager es un demonio activado por DBus que controla dispositivos y conexiones de banda ancha móvil (2G/3G/4G). Tanto si se trata de dispositivos integrados, llaves USB, teléfonos Bluetooth o dispositivos profesionales RS232/USB con fuentes de alimentación externas, ModemManager es capaz de preparar y configurar los módems y establecer conexiones con ellos.
-```
+```bash
 ModemManager.service
 ● └─multi-user.target
 ○   └─graphical.target
@@ -180,10 +180,10 @@ Unlike the cron service, anacron will not miss the execution of a scheduled job,
 Short for "get tty", is a Unix program running on a host computer that manages physical or virtual terminals (TTYs). When it detects a connection, it prompts for a username and runs the 'login' program to authenticate the user.
 > `getty` is the process that manages logins on the console and on serial ports, if any. It's generally not safe to disable this, as console access is what we go to when other means of accessing a server fail.
 
-# Script - Pendiente de revisión
+# Script
 Aun pendiente de revisar, pero [esta pagina](http://trajano.us.es/~fjfj/shell/shellscript.htm) tiene buena pinta para prender sobre porgramación shell.
 
-# Rsyslog - Pendiente de revisión
+# Rsyslog
 
 > Mandar logs a los compañeros, separados sin mezlcar
 
@@ -192,7 +192,7 @@ El uso de Rsyslog en sistemas Unix o Linux implica configurar su funcionamiento 
 1. Instalación:
    Asegúrate de que Rsyslog esté instalado en tu sistema. Puedes verificar su presencia ejecutando el siguiente comando en la terminal:
 
-   ```
+   ```bash
    sudo apt-get install rsyslog  # Para sistemas basados en Debian/Ubuntu
    ```
 
@@ -201,20 +201,20 @@ El uso de Rsyslog en sistemas Unix o Linux implica configurar su funcionamiento 
 
    Por ejemplo, puedes abrir el archivo de configuración principal con un editor de texto:
 
-   ```
+   ```bash
    sudo nano /etc/rsyslog.conf
    ```
 
    O si prefieres usar archivos de configuración separados:
 
-   ```
+   ```bash
    sudo nano /etc/rsyslog.d/mi_configuracion.conf
    ```
 
 3. Definir reglas de registro:
    En el archivo de configuración, puedes definir reglas que indiquen a Rsyslog qué registros recopilar y cómo manejarlos. Aquí hay un ejemplo de una regla simple para registrar mensajes del kernel en un archivo de registro:
 
-   ```
+   ```bash
    # Registra los mensajes del kernel en /var/log/kernel.log
    kern.* /var/log/kernel.log
    ```
@@ -222,14 +222,14 @@ El uso de Rsyslog en sistemas Unix o Linux implica configurar su funcionamiento 
 4. Reiniciar el servicio:
    Después de realizar cambios en la configuración, reinicia el servicio Rsyslog para que los cambios surtan efecto:
 
-   ```
+   ```bash
    sudo systemctl restart rsyslog   # Para sistemas con systemd
    ```
 
 5. Ver registros:
    Puedes ver los registros recopilados en los archivos de registro configurados. Por ejemplo, si configuraste Rsyslog para registrar mensajes del kernel en `/var/log/kernel.log`, puedes verlos con comandos como `cat`, `tail`, `less`, o herramientas de visualización de registros como `less` o `grep`.
 
-   ```
+   ```bash
    cat /var/log/kernel.log
    ```
 

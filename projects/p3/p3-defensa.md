@@ -1,7 +1,24 @@
-# PRÁCTICA 3
-## APARTADO 1
+<a id="top"></a>
+
+### Tabla de Contenidos
+- [APARTADO 1](#apartado-1)
+  - [SUBAPARTADO A](#subapartado-a)
+  - [SUBAPARTADO B](#subapartado-b)
+  - [SUBAPARTADO C](#subapartado-c)
+  - [SUBAPARTADO D](#subapartado-d)
+- [APARTADO 2](#apartado-2)
+  - [SUBAPARTADO A](#subapartado-a-1)
+  - [SUBAPARTADO B](#subapartado-b-1)
+  - [SUBAPARTADO C](#subapartado-c-1)
+- [APARTADO 3](#apartado-3)
+- [APARTADO 6](#apartado-6)
+- [APARTADO 7](#apartado-7)
+
+
+# APARTADO 1
 Tomando como base de trabajo el openVPN deberá configurar una VPN entre dos equipos virtuales del laboratorio que garanticen la confidencialidad entre sus comunicaciones.
-### APARTADO 1A
+
+## SUBAPARTADO A
 Abra un shell remoto sobre SSH y analice el proceso que se realiza. Configure su fichero ssh_known_hosts para dar soporte a la clave pública del servidor
 > `ssh -v lsi@10.11.49.54`
 
@@ -13,7 +30,7 @@ Abra un shell remoto sobre SSH y analice el proceso que se realiza. Configure su
 
 Si no pone el mensaje de _add new fingerprint_ está bien configurado.
 
-### APARTADO 1B
+## SUBAPARTADO B
 Haga una copia remota de un fichero utilizando un algoritmo de cifrado determinado. Analice el proceso que se realiza.
 
 > `scp -c aes128-ctr archivo lsi@10.11.48.70:/home/lsi`
@@ -21,7 +38,7 @@ Haga una copia remota de un fichero utilizando un algoritmo de cifrado determina
 > [!Note]
 > Para ver que cifrados estan disponibles usar `man ssh_config`.
 
-### APARTADO 1C
+## SUBAPARTADO C
 Configure su cliente y servidor para permitir conexiones basadas en un esquema de autenticación de usuario de clave pública.
 
 > [!Warning]
@@ -51,7 +68,7 @@ lsi@debian:~$ cat ../keys_compañero/id_rsa.pub >> authorized_keys
 lsi@debian:~$ cat ../keys_compañero/id_ecdsa.pub >> authorized_keys
 ```
 
-### APARTADO 1D
+## SUBAPARTADO D
 Mediante túneles SSH securice algún servicio no seguro.
 
 > `ssh -L 10080:10.11.49.54:80 lsi@10.11.49.55`
@@ -77,9 +94,13 @@ lsi@debian:~$ wget localhost:10080 # Devuelve el 80 de la máquina de mi compañ
 # Esto redirecciona el localhost, si quisiera que redireccionara mi ip, se pone al prinicipio :
 lsi@debian:~$ ssh -L 10.11.48.69:10080:10.11.48.70:80 lsi@10.11.48.70
 ```
-## APARTADO 2
+
+<p align="right"><a href="#top">back to top</a></p>
+
+# APARTADO 2
 Tomando como base de trabajo el openVPN deberá configurar una VPN entre dos equipos virtuales del laboratorio que garanticen la confidencialidad entre sus comunicaciones.
-### APARTADO 2A
+
+## SUBAPARTADO A
 Configure su Autoridad Certificadora en su equipo.
 
 > `cd /usr/lib/ssl/misc`
@@ -89,7 +110,7 @@ Configure su Autoridad Certificadora en su equipo.
 > [!Note]
 > _CA certificate is in ./demoCA/cacert.pem_
 
-### APARTADO 2B
+## SUBAPARTADO B
 Cree su propio certificado para ser firmado por la Autoridad Certificado. Bueno, y fírmelo.
 
 1. Generamos certificado para nuestro propio servidor:
@@ -104,7 +125,7 @@ Cree su propio certificado para ser firmado por la Autoridad Certificado. Bueno,
 > [!Note]
 > _Signed certificate is in newcert.pem_
 
-### APARTADO 2C
+## SUBAPARTADO C
 Configure su Apache para que únicamente proporcione acceso a un determinado directorio del árbol web bajo la condición del uso de SSL. Considere que si su clave privada está cifrada en el proceso de arranque su máquina le solicitará la correspondiente frase de paso, pudiendo dejarla inalcanzable para su sesión ssh de trabajo.
 
 > `cd /etc/apache2`
@@ -206,8 +227,9 @@ Creamos una carpeta llamada secure en /var/ww/html y metemos dentro una copia de
 
 Ahora usando ``lynx http://Usuario`` deberia soltar un error 403
 
+<p align="right"><a href="#top">back to top</a></p>
 
-## APARTADO 3
+# APARTADO 3
 Tomando como base de trabajo el openVPN deberá configurar una VPN entre dos equipos virtuales del laboratorio que garanticen la confidencialidad entre sus comunicaciones.
 
 > `apt install openvpn`
@@ -256,8 +278,9 @@ Le paso la `vpn_key.key` a mi compañero y hace exactamente lo mismo haciendo lo
 
 > `modprobe tun`
 
-# Apartado 6 - Firewall
+<p align="right"><a href="#top">back to top</a></p>
 
+# APARTADO 6
 _En este punto, cada máquina virtual será servidor y cliente de diversos servicios (NTP, syslog, ssh, web, etc.). Configure un “firewall stateful” de máquina adecuado a la situación actual de su máquina._
 
 
@@ -402,8 +425,9 @@ echo "Firewall reseteado"
 
 Guardamos estos scripts en una misma carpeta y ejecutamos testFirewall.sh para probar.
 
-# Apartado 7 - Lynis
+<p align="right"><a href="#top">back to top</a></p>
 
+# APARTADO 7
 _Ejecute la utilidad de auditoría de seguridad lynis en su sistema y trate de identificar las acciones de securización detectadas así como los consejos sobre las que se deberían contemplar._
 
 
